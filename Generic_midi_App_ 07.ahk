@@ -39,6 +39,7 @@ Generic Midi App - renamed from Generic Midi Program
   
   * Notes - All midi in/out lib stuff is included in Midi_In_Out_Lib.ahk, besides winmm.dll (part of windows).
 */
+Menu, Tray, Icon, C:\Tools\AHK\Icons\Rocket.ico
 #Persistent
 #SingleInstance , force         	                                                    ; Only run one instance
 SendMode Input                              	                                ; Recommended for new scripts due to its superior speed and reliability.
@@ -56,7 +57,7 @@ gosub, MidiPortRefresh                  ; used to refresh the input and output p
 port_test(numports,numports2)   ; test the ports - check for valid ports? - see Midi_In_Out_Lib.ahk file
 gosub, midiin_go                            ; opens the midi input port listening routine see Midi_In_Out_Lib.ahk file
 gosub, midiout                               ; opens the midi out port see Midi_In_Out_Lib.ahk file 
-gosub, midiMon                             ; see below - a monitor gui - see Midi_In_Out_Lib.ahk file  COMMENT THIS OUT IF YOU DON'T WANT DISPLAY
+;gosub, midiMon                             ; see below - a monitor gui - see Midi_In_Out_Lib.ahk file  COMMENT THIS OUT IF YOU DON'T WANT DISPLAY
 
 ;*************************************************
 ;*         VARIBLES TO SET @ STARTUP
