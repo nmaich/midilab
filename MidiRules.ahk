@@ -160,6 +160,7 @@ if statusbyte between 144 and 159 ; detect if note message is "note on"
 ;   IS INCOMING MSG IS A CC?
 ;*****************************************************************
 
+
   if statusbyte between 176 and 191 ; check status byte for cc 176-191 is the range for CC messages
    {
     
@@ -167,7 +168,80 @@ if statusbyte between 144 and 159 ; detect if note message is "note on"
     ;*****************************************************************
     ;   PUT ALL CC TRANSFORMATIONS HERE 
     ;***************************************************************** 
-    ;++++++++++++++++++++++++++++++++ examples of CC rules ++++++++++ feel free to add more.  
+    ;++++++++++++++++++++++++++++++++ examples of CC rules ++++++++++ feel free to add more.
+
+
+  IfEqual, data1, 51
+  {
+
+     if data2 between 1 and 10
+     {
+     SendInput {Down %data2%}
+     }
+
+     if data2 between 120 and 127
+     {
+     datanew := 128-data2
+     SendInput {Up %datanew%}
+     }
+
+  }
+
+  IfEqual, data1, 50
+  {
+
+     if data2 between 1 and 10
+     {
+     SendInput {Right %data2%}
+     }
+
+     if data2 between 120 and 127
+     {
+     datanew := 128-data2
+     SendInput {Left %datanew%}
+     }
+
+  }
+
+  IfEqual, data1, 24
+  {
+
+     if data2 between 1 and 10
+     {
+     datanew := (data2)
+     SendInput {WheelUp %datanew%}
+     }
+
+     if data2 between 120 and 127
+     {
+     datanew := (128-data2)
+     SendInput {WHeelDown %datanew%}
+     }
+
+  }
+
+  IfEqual, data1, 25
+  {
+
+     if data2 between 1 and 10
+     {
+     datanew := (data2)*4
+     SendInput {WheelUp %datanew%}
+     }
+
+     if data2 between 120 and 127
+     {
+     datanew := (128-data2)*4
+     SendInput {WHeelDown %datanew%}
+     }
+
+  }
+
+  }
+
+  return
+
+  /*
      IfEqual, data1, 7
       {
      ;  msgbox, ,,7,1
@@ -216,17 +290,89 @@ if statusbyte between 144 and 159 ; detect if note message is "note on"
     }
   ;msgbox filter triggered
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  end of edit section
+*/
 
-}
+#IfWinActive, ahk_class CabinetWClass
 
-Return
+  if statusbyte between 176 and 191 ; check status byte for cc 176-191 is the range for CC messages
+   {
+
+    ;MsgBox,,,,1
+    ;*****************************************************************
+    ;   PUT ALL CC TRANSFORMATIONS HERE
+    ;*****************************************************************
+    ;++++++++++++++++++++++++++++++++ examples of CC rules ++++++++++ feel free to add more.
 
 
+  IfEqual, data1, 26
+  {
 
+     if data2 between 1 and 10
+     {
+     SendInput {Enter %data2%}
+     }
 
+     if data2 between 120 and 127
+     {
+     datanew := 128-data2
+     SendInput {Backspace %datanew%}
+     }
 
+  }
 
+  IfEqual, data1, 50
+  {
 
+     if data2 between 1 and 10
+     {
+     SendInput {Right %data2%}
+     }
+
+     if data2 between 120 and 127
+     {
+     datanew := 128-data2
+     SendInput {Left %datanew%}
+     }
+
+  }
+
+  IfEqual, data1, 24
+  {
+
+     if data2 between 1 and 10
+     {
+     datanew := (data2)
+     SendInput {WheelUp %datanew%}
+     }
+
+     if data2 between 120 and 127
+     {
+     datanew := (128-data2)
+     SendInput {WHeelDown %datanew%}
+     }
+
+  }
+
+  IfEqual, data1, 25
+  {
+
+     if data2 between 1 and 10
+     {
+     datanew := (data2)*4
+     SendInput {WheelUp %datanew%}
+     }
+
+     if data2 between 120 and 127
+     {
+     datanew := (128-data2)*4
+     SendInput {WHeelDown %datanew%}
+     }
+
+  }
+
+  }
+
+return
 
 
 /* =============================
@@ -267,4 +413,4 @@ Return
 ;==========================================
 */
 
-
+}
