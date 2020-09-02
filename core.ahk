@@ -1,8 +1,8 @@
 ;*************************************************
-;*      MIDI INPUT DETECTION 
+;*      MIDI INPUT DETECTION
 ;              PARSE FUNCTION
 ;*************************************************
-/* 
+/*
   Midi messages are made up of several sections
   Statusbyte, midi channel, data1, data2 - they are all combined into one midi message
   https://www.nyu.edu/classes/bello/FMT_files/9_MIDI_code.pdf
@@ -16,7 +16,7 @@ MidiMsgDetect(hInput, midiMsg, wMsg) ; Midi input section in calls this function
     chan          := (statusbyte & 0x0f) + 1      ; WHAT MIDI CHANNEL IS THE MESSAGE ON? EXTRACT FROM STATUSBYTE
     data1         := (midiMsg >> 8) & 0xFF     ; THIS IS DATA1 VALUE = NOTE NUMBER OR CC NUMBER
     data2         := (midiMsg >> 16) & 0xFF   ; DATA2 VALUE IS NOTE VELEOCITY OR CC VALUE
-    pitchb        := (data2 << 7) | data1          ;(midiMsg >> 8) & 0x7F7F  masking to extract the pbs  
+    pitchb        := (data2 << 7) | data1          ;(midiMsg >> 8) & 0x7F7F  masking to extract the pbs
   ; =============== assign stb variable for display only ; ===============
   if statusbyte between 176 and 191   ; Is message a CC
     stb := "CC"                                        ; if so then set stb to CC - only used with the midi monitor
@@ -29,8 +29,8 @@ MidiMsgDetect(hInput, midiMsg, wMsg) ; Midi input section in calls this function
   if statusbyte between 224 and 239   ; Is message a Pitch Bend
     stb := "PitchB"                                 ; Set gui to pb
 
-  MidiInDisplay(stb, statusbyte, chan, data1, data2) ; ===============Show midi input on midi monitor display ; =============== 
-  gosub, MidiRules                                                        ; =============== run midirules label to organize 
+  MidiInDisplay(stb, statusbyte, chan, data1, data2) ; ===============Show midi input on midi monitor display ; ===============
+  gosub, rules                                                        ; =============== run rules label to organize
   } ; =============== ; end of MidiMsgDetect funciton
 Return
 
@@ -81,14 +81,14 @@ return
 ;*************************************************
 
 midiMon: ; midi monitor gui with listviews
-gui,14:destroy 
+gui,14:destroy
 gui,14:default
 gui,14:add,text, x80 y5, Midi Input ; %TheChoice%
   Gui,14:Add, DropDownList, x40 y20 w140 Choose%TheChoice% vMidiInPort gDoneInChange altsubmit, %MiList%  ; (
 gui,14:add,text, x305 y5, Midi Ouput ; %TheChoice2%
   Gui,14:Add, DropDownList, x270 y20 w140  Choose%TheChoice2% vMidiOutPort gDoneOutChange altsubmit , %MoList%
-Gui,14:Add, ListView, x5 r11 w220 Backgroundblack caqua Count10 vIn1,  EventType|StatB|Ch|data1|data2| 
-gui,14:Add, ListView, x+5 r11 w220 Backgroundblack cyellow Count10 vOut1,  EventType|StatB|Ch|data1|data2| 
+Gui,14:Add, ListView, x5 r11 w220 Backgroundblack caqua Count10 vIn1,  EventType|StatB|Ch|data1|data2|
+gui,14:Add, ListView, x+5 r11 w220 Backgroundblack cyellow Count10 vOut1,  EventType|StatB|Ch|data1|data2|
 Gui, 14: add, Button, x10 w205 gSet_Done, Done - Reload script.
   Gui, 14: add, Button, xp+205 w205 gCancel, Cancel
 gui,14:Show, autosize xcenter y5, MidiMonitor
@@ -128,7 +128,7 @@ Return
 
 ; =============== gui done change stuff - see label in both gui listbox line ; ===============
   ;44444444444444444444444444 NEED TO EDIT THIS TO REFLECT CHANGES IN GENMCE PRIOR TO SEND OUT
-DoneInChange:                                   ; Run this when midi input port has changed 
+DoneInChange:                                   ; Run this when midi input port has changed
   gui +lastfound
   Gui, Submit, NoHide
   Gui, Flash
@@ -180,8 +180,8 @@ ResetAll:                                                                 ; prog
 Return
 
 GuiClose:                                                               ; on x exit app
-  Suspend, Permit                                                ; allow Exit to work Paused. 
-   MsgBox, 4, Exit %version%, Exit %version% %ver%? ; 
+  Suspend, Permit                                                ; allow Exit to work Paused.
+   MsgBox, 4, Exit %version%, Exit %version% %ver%? ;
   IfMsgBox No
       Return
   Else IfMsgBox Yes
@@ -202,17 +202,17 @@ ExitApp
 
 MidiPortRefresh:                                    ; get the list of ports
 
- MIlist := MidiInsList(NumPorts)        ; Get midi inputs list 
-	Loop Parse, MIlist, | 
-		{
-		}
-	TheChoice := MidiInDevice + 1
+ MIlist := MidiInsList(NumPorts)        ; Get midi inputs list
+  Loop Parse, MIlist, |
+    {
+    }
+  TheChoice := MidiInDevice + 1
 
 MOlist := MidiOutsList(NumPorts2)   ; Get midi outputs list
-   Loop Parse, MOlist, | 
-		{
-		}
-	TheChoice2 := MidiOutDevice + 1
+   Loop Parse, MOlist, |
+    {
+    }
+  TheChoice2 := MidiOutDevice + 1
 
 return
 
@@ -234,7 +234,7 @@ ReadIni()                                         ; Read .ini file to load port 
       }
     Else                                                                                    ; no ini exists and this is either the first run or reset settings.
       {
-        MsgBox, 1, No ini file found, Select midi ports?      ; Prompt user to select midi ports 
+        MsgBox, 1, No ini file found, Select midi ports?      ; Prompt user to select midi ports
         IfMsgBox, Cancel
           ExitApp
         IfMsgBox, yes
@@ -246,10 +246,10 @@ ReadIni()                                         ; Read .ini file to load port 
 ;*   WRITE TO INI FILE FUNCTION  + UPDATE INI WHENEVER SAVED PARAMETERS CHANGE
 ;*************************************************
 
-WriteIni()                                                                  ; Write selections to .ini file 
+WriteIni()                                                                  ; Write selections to .ini file
   {
     global MidiInDevice, MidiOutDevice, version
-      IfNotExist, %version%.ini                                   ; if no .ini 
+      IfNotExist, %version%.ini                                   ; if no .ini
         FileAppend,, %version%.ini                              ; make  .ini with the following entries.
     IniWrite, %MidiInDevice%, %version%.ini, Settings, MidiInDevice
     IniWrite, %MidiOutDevice%, %version%.ini, Settings, MidiOutDevice
@@ -259,16 +259,16 @@ WriteIni()                                                                  ; Wr
 ;*                 PORT TESTING
 ;*************************************************
 
-port_test(numports,numports2)                             ; confirm selected ports exist ; CLEAN THIS UP STILL 
+port_test(numports,numports2)                             ; confirm selected ports exist ; CLEAN THIS UP STILL
   {
-    global midiInDevice, midiOutDevice, midiok    ; Set varibles to golobal 
-    
+    global midiInDevice, midiOutDevice, midiok    ; Set varibles to golobal
+
     ;; =============== In port selection test based on numports ; ===============
-    If MidiInDevice not Between 0 and %numports% 
+    If MidiInDevice not Between 0 and %numports%
       {
         MidiIn := 0 ; this var is just to show if there is an error - set if the ports are valid = 1, invalid = 0
             ;MsgBox, 0, , midi in port Error ; (this is left only for testing)
-        If (MidiInDevice = "")                                      ; if there is no midi in device 
+        If (MidiInDevice = "")                                      ; if there is no midi in device
             MidiInerr = Midi In Port EMPTY.                ; set this var = error message
             ;MsgBox, 0, , midi in port EMPTY
         If (midiInDevice > %numports%)                  ; if greater than the number of ports on the system.
@@ -286,8 +286,8 @@ port_test(numports,numports2)                             ; confirm selected por
         If (MidiOutDevice = "")                                  ; if blank
             MidiOuterr = Midi Out Port EMPTY.         ; set this error message
             ;MsgBox, 0, , midi o port EMPTY - THIS LINE IS JUST FOR TESTING
-        If (midiOutDevice > %numports2%)             ; if greater than number of availble ports  
-            MidiOuterr = Midi Out Port Out Invalid.  ; set this error message   
+        If (midiOutDevice > %numports2%)             ; if greater than number of availble ports
+            MidiOuterr = Midi Out Port Out Invalid.  ; set this error message
             ;MsgBox, 0, , midi out port out of range - THIS LINE IS JUST FOR TESTING
       }
     Else
@@ -520,7 +520,7 @@ OpenCloseMidiAPI()
       ; #define MM_MIM_LONGERROR 0x3C6
 
     OnMessage(0x3C1, "MidiMsgDetect")  ;  See top of this file for function called when a midi message is detected
-    OnMessage(0x3C2, "MidiMsgDetect")  
+    OnMessage(0x3C2, "MidiMsgDetect")
     OnMessage(0x3C3, "MidiMsgDetect")
     OnMessage(0x3C4, "MidiMsgDetect")
     OnMessage(0x3C5, "MidiMsgDetect")
@@ -532,7 +532,7 @@ Return
 ;*          MIDI IN PORT HANDLING
 ;*************************************************
 
-MidiInsList(ByRef NumPorts)                                             ; should work for unicode now... 
+MidiInsList(ByRef NumPorts)                                             ; should work for unicode now...
   { ; Returns a "|"-separated list of midi output devices
     local List, MidiInCaps, PortName, result, midisize
   (A_IsUnicode)? offsetWordStr := 64: offsetWordStr := 32
@@ -545,7 +545,7 @@ MidiInsList(ByRef NumPorts)                                             ; should
     Loop %NumPorts%
       {
         result := DllCall("winmm.dll\midiInGetDevCaps", "UInt",A_Index-1, "Ptr",&MidiInCaps, "UInt",midisize)
-    
+
         If (result OR ErrorLevel) {
             List .= "|-Error-"
             Continue
