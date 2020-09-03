@@ -38,7 +38,7 @@ joydisplay: ; for testging only.
   Gui,2: Add, Text, vMyText w300, ; XX & YY serve to auto-size the window.
   gui,2:add,edit, vjoyXnum
   Gui,2: Show, AutoSize xcenter ycenter NoActivate  ; NoActivate avoids deactivating the currently active window.
-  
+
 return
 
 stick: ; label for running joystick detection
@@ -50,7 +50,7 @@ stick: ; label for running joystick detection
 
     joyXval := round(joyx*1.27)             ; assumes Joyx 0-100 conversion to 0 -127
     joyYval := round((joyy/(-100)+1)*127)   ; inverted output joyY 100 - 0 conversion to 127 - 0 (thanks skylord5816 ahk chat)
-    joyZval := round((joyZ/(-100)+1)*127)   ;  
+    joyZval := round((joyZ/(-100)+1)*127)   ;
     joyrval := round(joyr*1.27)             ;joy rotation
 
     GuiControl,2:, MyText, X%joyX% = ccX%joyXval% | Y%joyY% = ccY%joyYval% | R%joyR% = ccR%joyRval% | Z%joyz% = ccZ%joyzval% ; updates the joydisplay, active.
@@ -65,18 +65,18 @@ stick: ; label for running joystick detection
        gosub, ShowMidiOutMessage
        joyx_last := joyXval
       ;MsgBox joylast
-      
+
      }
     if (joyYval != joyY_last)
      {
-       stb = CC 
+       stb = CC
        statusbyte = 176 ; chan 1 + 175
        byte1 = %joyYnum%
        byte2 = %joyYval%
-       midiOutShortMsg(h_midiout, statusbyte, byte1, byte2) 
+       midiOutShortMsg(h_midiout, statusbyte, byte1, byte2)
        gosub, ShowMidiOutMessage
        joyY_last := joyYval
-     
+
     }
     If (joyRVal != joyR_last)
      {
@@ -88,18 +88,18 @@ stick: ; label for running joystick detection
        gosub, ShowMidiOutMessage
        joyR_last := joyRval
       ;MsgBox joylast
-      
+
      }
     if (joyzval != joyZ_last)
      {
-       stb = CC 
+       stb = CC
        statusbyte = 176 ; chan 1 + 175
        byte1 = %joyZnum%
        byte2 = %joyZval%
        midiOutShortMsg(h_midiout, statusbyte, byte1, byte2) ; commented out just to run stand alone - showing the settimer is working.
        gosub, ShowMidiOutMessage
        joyZ_last := joyZval
-     
+
      }
     Else
      Return ; if none of them have moved, nothing to do.

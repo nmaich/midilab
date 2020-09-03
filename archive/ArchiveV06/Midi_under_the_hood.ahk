@@ -1,29 +1,29 @@
 
-; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! no edit below here, unless you know what you are doing. 
+; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! no edit below here, unless you know what you are doing.
 
 ;*************************************************
 ;*          MIDI UNDER THE HOOD
-;*  DO NOT EDIT IN HERE, unless you know what 
+;*  DO NOT EDIT IN HERE, unless you know what
 ;*          what you are doing!
 ;*************************************************
 
 ;****************************************************************************************************************
 ;******************************************** midi "under the hood" *********************************************
-/* 
+/*
     This part is meant to take care of the "under the hood" midi input and output selection and save selection to an ini file.
     Hopefully it simplifies usage for others out here trying to do things with midi and ahk.
-    
+
     * use it as an include.
-    
+
     The code here was taken/modified from the work by TomB/Lazslo on Midi Output
         http://www.autohotkey.com/forum/viewtopic.php?t=18711&highlight=midi+output
-    
-    Orbik's Midi input thread 
+
+    Orbik's Midi input thread
         http://www.autohotkey.com/forum/topic30715.html
         This method does NOT use the midi_in.dll, it makes direct calls to the winmm.dll
-        
+
     Many different people took part in the creation of this file.
-    
+
     ; Last edited 6/17/2010 11:30 AM by genmce
 
 */
@@ -33,14 +33,14 @@
 ;*************************************************
 MidiPortRefresh: ; get the list of ports
 
- MIlist := MidiInsList(NumPorts) 
-	Loop Parse, MIlist, | 
+ MIlist := MidiInsList(NumPorts)
+	Loop Parse, MIlist, |
 		{
 		}
 	TheChoice := MidiInDevice + 1
 
-MOlist := MidiOutsList(NumPorts2) 
-   Loop Parse, MOlist, | 
+MOlist := MidiOutsList(NumPorts2)
+   Loop Parse, MOlist, |
 		{
 		}
 	TheChoice2 := MidiOutDevice + 1
@@ -74,15 +74,15 @@ ReadIni() ; also set up the tray Menu
       }
   }
 ;*************************************************
-;*          WRITE TO INI FILE FUNCTION 
+;*          WRITE TO INI FILE FUNCTION
 ;*************************************************
 
 ;CALLED TO UPDATE INI WHENEVER SAVED PARAMETERS CHANGE
 WriteIni()
   {
     global MidiInDevice, MidiOutDevice, version
-   
-    IfNotExist, %version%io.ini ; if no ini 
+
+    IfNotExist, %version%io.ini ; if no ini
       FileAppend,, %version%io.ini ; make one with the following entries.
     IniWrite, %MidiInDevice%, %version%.ini, Settings, MidiInDevice
     IniWrite, %MidiOutDevice%, %version%.ini, Settings, MidiOutDevice
@@ -93,17 +93,17 @@ WriteIni()
 ;*************************************************
 ;------------ port testing to make sure selected midi port is valid --------------------------------
 
-port_test(numports,numports2) ; confirm selected ports exist ; CLEAN THIS UP STILL 
+port_test(numports,numports2) ; confirm selected ports exist ; CLEAN THIS UP STILL
 
   {
     global midiInDevice, midiOutDevice, midiok
-    
+
     ; ----- In port selection test based on numports
-    If MidiInDevice not Between 0 and %numports% 
+    If MidiInDevice not Between 0 and %numports%
       {
         MidiIn := 0 ; this var is just to show if there is an error - set if the ports are valid = 1, invalid = 0
             ;MsgBox, 0, , midi in port Error ; (this is left only for testing)
-        If (MidiInDevice = "")              ; if there is no midi in device 
+        If (MidiInDevice = "")              ; if there is no midi in device
             MidiInerr = Midi In Port EMPTY. ; set this var = error message
             ;MsgBox, 0, , midi in port EMPTY
         If (midiInDevice > %numports%)          ; if greater than the number of ports on the system.
@@ -121,8 +121,8 @@ port_test(numports,numports2) ; confirm selected ports exist ; CLEAN THIS UP STI
         If (MidiOutDevice = "")                 ; if blank
             MidiOuterr = Midi Out Port EMPTY.   ; set this error message
             ;MsgBox, 0, , midi o port EMPTY
-        If (midiOutDevice > %numports2%)             ; if greater than number of availble ports  
-            MidiOuterr = Midi Out Port Out Invalid.  ; set this error message   
+        If (midiOutDevice > %numports2%)             ; if greater than number of availble ports
+            MidiOuterr = Midi Out Port Out Invalid.  ; set this error message
             ;MsgBox, 0, , midi out port out of range
       }
     Else
@@ -148,13 +148,13 @@ port_test(numports,numports2) ; confirm selected ports exist ; CLEAN THIS UP STI
 Return
 
 ;*************************************************
-;*        		  MIDI SET GUI 
+;*        		  MIDI SET GUI
 ;*************************************************
 ; ------------------ end of port testing ---------------------------
 
 
 MidiSet: ; midi port selection gui
- 
+
  ; ------------- MIDI INPUT SELECTION -----------------------
   Gui, 6: Destroy
   Gui, 2: Destroy
@@ -257,20 +257,20 @@ Return
 
 GuiClose: ; on x exit app
   Suspend, Permit ; allow Exit to work Paused. I just added this yesterday 3.16.09 Can now quit when Paused.
- 
-  MsgBox, 4, Exit %version%, Exit %version% %ver%? ; 
+
+  MsgBox, 4, Exit %version%, Exit %version% %ver%? ;
   IfMsgBox No
       Return
   Else IfMsgBox Yes
       midiOutClose(h_midiout)
-    
+
   Gui, 6: Destroy
   Gui, 2: Destroy
   Gui, 3: Destroy
   Gui, 4: Destroy
   Gui, 5: Destroy
   gui, 7: destroy
- ;gui, 
+ ;gui,
  Sleep 100
   ;winclose, Midi_in_2 ;close the midi in 2 ahk file
  ExitApp
@@ -313,7 +313,7 @@ hMidiIn := NumGet(hMidiIn) ; because midiInOpen writes the value in 32 bit binar
       }
 
 OpenCloseMidiAPI()
-  
+
   ; ----- the OnMessage listeners ----
 
       ; #define MM_MIM_OPEN 0x3C1 /* MIDI input */
@@ -324,7 +324,7 @@ OpenCloseMidiAPI()
       ; #define MM_MIM_LONGERROR 0x3C6
 
     OnMessage(0x3C1, "MidiMsgDetect")  ; calling the function MidiMsgDetect in get_midi_in.ahk
-    OnMessage(0x3C2, "MidiMsgDetect")  
+    OnMessage(0x3C2, "MidiMsgDetect")
     OnMessage(0x3C3, "MidiMsgDetect")
     OnMessage(0x3C4, "MidiMsgDetect")
     OnMessage(0x3C5, "MidiMsgDetect")
@@ -351,7 +351,7 @@ MidiInsList(ByRef NumPorts)   ; should work for unicode now... untested
     Loop %NumPorts%
       {
         result := DllCall("winmm.dll\midiInGetDevCaps", "UInt",A_Index-1, "Ptr",&MidiInCaps, "UInt",midisize)
-		
+
         If (result OR ErrorLevel) {
             List .= "|-Error-"
             Continue
@@ -428,7 +428,7 @@ MidiInsEnumerate() { ; Returns number of midi output devices, creates global arr
 ;*************************************************
 ;*    MIDI OUT LIBRARY FROM lASZLO/TOMB
 ;	Modified by JimF - removed long message
-;	handling as well as combining status byte with ch 
+;	handling as well as combining status byte with ch
 ; 	see commented out section below if you want to change it back
 ; unicode fix by Grass_HOPEr
 ;*************************************************

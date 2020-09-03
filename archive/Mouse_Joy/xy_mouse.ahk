@@ -56,7 +56,7 @@ Return
 
 ;*************************************************
 ;* 			mouse wheel routine
-;*	     midi output not created yet 
+;*	     midi output not created yet
 ;*************************************************
 
 $Wheeldown:: ; when wheel is moved down.
@@ -86,7 +86,7 @@ countup: ; chanage this to do midi work next.
 	MsgBox, 0, , %count%, .35 ; just a message box to show what is happening
 
 Return
-	
+
 countdown:
 	count := --count
 	MsgBox, 0, , %count%, .35
@@ -100,9 +100,9 @@ Return
 XYmouse: ; run the xy mouse sub
 
 ; =============== trigger the xymouse ======================
-/* 
+/*
 	CONSIDER RIGHT MOUSE BUTTON as the trigger.
-	
+
 */
 
 If GetKeyState("Capslock", "T")
@@ -115,17 +115,17 @@ If GetKeyState("Capslock", "T")
 				MouseMove,  ModWheelPos, CenterY, 0
 				reset := 1
 				moveit := 1  ; mouse move is done.
-			 }   
+			 }
 	   IfEqual, moveit, 1
 		  {
-			 ; do nothing, MouseMove already completed   
+			 ; do nothing, MouseMove already completed
 		  }
 	;Return
 
 
 		IfEqual, xyRun, 1 ; hotkey is held down so do the stuff below
 		  {
-			 MouseGetPos, sx, sy                   ; Get starting mouse postion    
+			 MouseGetPos, sx, sy                   ; Get starting mouse postion
 			 Gui,3: Show, xCenter y5  AutoSize NoActivate  ; NoActivate avoids deactivating the currently active window. ;ONLY SHOW GUI WHILE capslock HELD DOWN.
 			 Sleep, 100 ; not sure this is needed?  Some kind of interval needed between MouseGetPos, hate to use a sleep
 			 MouseGetPos, cx, cy
@@ -151,7 +151,7 @@ If GetKeyState("Capslock", "T")
 else ;capslock up:: ;
 
    ;IfEqual, xyRun, 0
-   
+
     {
        if reset  ; if reset is valid
 			{ ; ======== stop the xy mouse ====================
@@ -162,7 +162,7 @@ else ;capslock up:: ;
 			   pb := 8192               ; set pb to center (no Bend)
 			   midiOutShortMsg(h_midiout, (channel+ 223), (PB&0x7F), (PB>>7))   ; send midi pitch bend to center out midi port
 			   Gui,3: hide
-				reset = 	
+				reset =
 			 GuiControl,3:, MyText, ModWheel %XmidiVal%, PitchBend %pb% ; only to update the Gui
 			Return
 			}
