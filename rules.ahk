@@ -65,55 +65,39 @@ if statusbyte between 176 and 191
 
   }
 
-  ; Explorer
+  ; Any Application except Live 10
 
-  if application = Explorer.exe
+  if application != Ableton Live 10 Suite.exe
   {
 
-    IfEqual, data1, 51
+    IfEqual, data1, 22
     {
 
       if data2 between 1 and 10
       {
-        SendInput {Down %data2%}
+        SendInput {Shift down}{Right %data2%}{Shift up}
       }
 
       if data2 between 120 and 127
       {
         datanew := 128-data2
-        SendInput {Up %datanew%}
+        SendInput {Shift down}{Left %datanew%}{Shift up}
       }
 
     }
 
-    IfEqual, data1, 50
+    IfEqual, data1, 23
     {
 
       if data2 between 1 and 10
       {
-        SendInput {Right %data2%}
+        SendInput {Shift down}{Down %data2%}{Shift up}
       }
 
       if data2 between 120 and 127
       {
         datanew := 128-data2
-        SendInput {Left %datanew%}
-      }
-
-    }
-
-    IfEqual, data1, 26
-    {
-
-      if data2 between 1 and 10
-      {
-        SendInput {Enter %data2%}
-      }
-
-      if data2 between 120 and 127
-      {
-        datanew := 128-data2
-        SendInput {Backspace %datanew%}
+        SendInput {Shift down}{Up %datanew%}{Shift up}
       }
 
     }
@@ -148,6 +132,54 @@ if statusbyte between 176 and 191
       {
         datanew := (128-data2)*4
         SendInput {WheelUp %datanew%}
+      }
+
+    }
+
+    IfEqual, data1, 26
+    {
+
+      if data2 between 1 and 10
+      {
+        SendInput {Enter %data2%}
+      }
+
+      if data2 between 120 and 127
+      {
+        datanew := 128-data2
+        SendInput {Backspace %datanew%}
+      }
+
+    }
+
+    IfEqual, data1, 50
+    {
+
+      if data2 between 1 and 10
+      {
+        SendInput {Right %data2%}
+      }
+
+      if data2 between 120 and 127
+      {
+        datanew := 128-data2
+        SendInput {Left %datanew%}
+      }
+
+    }
+
+    IfEqual, data1, 51
+    {
+
+      if data2 between 1 and 10
+      {
+        SendInput {Down %data2%}
+      }
+
+      if data2 between 120 and 127
+      {
+        datanew := 128-data2
+        SendInput {Up %datanew%}
       }
 
     }
