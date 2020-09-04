@@ -20,7 +20,7 @@ gosub, MidiPortRefresh                  ; used to refresh the input and output p
 port_test(numports,numports2)   ; test the ports - check for valid ports? - see Midi_In_Out_Lib.ahk file
 gosub, midiin_go                            ; opens the midi input port listening routine see Midi_In_Out_Lib.ahk file
 gosub, midiout                               ; opens the midi out port see Midi_In_Out_Lib.ahk file
-gosub, midiMon                             ; see below - a monitor gui - see Midi_In_Out_Lib.ahk file  COMMENT THIS OUT IF YOU DON'T WANT DISPLAY
+; gosub, midiMon                             ; see below - a monitor gui - see Midi_In_Out_Lib.ahk file  COMMENT THIS OUT IF YOU DON'T WANT DISPLAY
 gosub, dev
 
 ;*************************************************

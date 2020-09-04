@@ -35,7 +35,7 @@ MidiMsgDetect(hInput, midiMsg, wMsg) ; Midi input section in calls this function
 Return
 
 
-SendKey(num, key1, key2, data1, data2, multi=1)
+SendKey(num, key1, key2, data1, data2, multi=1, mod1="none", mod2="none")
 {
 
   ;Msgbox %num%

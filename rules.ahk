@@ -2,14 +2,25 @@ rules:
 
 
 
-; NoteOn Messages
+; Get foreground application
+
+WinGet, application, ProcessName, A
+
+;MsgBox, %application%
+
+
+
+
+; Process note-on messages
 
 if statusbyte between 144 and 159
-{}
+{
+  ; No rules set
+}
 
 
 
-; NoteOff Messages
+; Process note-off messages
 
 if statusbyte between 128 and 143
 {
@@ -18,13 +29,12 @@ if statusbyte between 128 and 143
 
 
 
-; CC Messages
+; Process cc messages
 
 if statusbyte between 176 and 191
 {
 
-  WinGet, application, ProcessName, A
-  ;MsgBox, %application%
+
 
   ;Only if Ableton Live 10 active
 
@@ -37,14 +47,16 @@ if statusbyte between 176 and 191
 
   }
 
+
+
   ; Any Application except Live 10
 
   if application != Ableton Live 10 Suite.exe
   {
 
-    ; Only when all modifier key are off, process these commands
+    ; Only when all modifier keys are off, process these commands
 
-    if getKeyState("LCtrl", "P") != true and getKeyState("LAlt", "P") != true
+    if !getKeyState("LCtrl", "P") and !getKeyState("LAlt", "P") and !getKeyState("Shift", "P")
 
     {
 
@@ -83,6 +95,7 @@ if statusbyte between 176 and 191
       }
 
       ; Simple rules for single key macros
+      ; cc, key1, key2, data1, data2, repeat-keypress
 
       SendKey(24, "Up", "Down", data1, data2, 8)
 
@@ -97,6 +110,43 @@ if statusbyte between 176 and 191
     }
 
     ; Only when modifiers key Ctrl is on
+
+    if getKeyState("Shift", "P")
+    {
+
+      IfEqual, data1, 50
+      {
+
+        if data2 between 1 and 10
+        {
+          SendInput {Shift down}{Right %data2%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Shift down}{Left %datanew%}
+        }
+
+      }
+
+      IfEqual, data1, 51
+      {
+
+        if data2 between 1 and 10
+        {
+          SendInput {Shift down}{Down %data2%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Shift down}{Up %datanew%}
+        }
+
+      }
+
+    }
 
     if getKeyState("LCtrl", "P")
     {
