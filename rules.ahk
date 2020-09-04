@@ -70,116 +70,164 @@ if statusbyte between 176 and 191
   if application != Ableton Live 10 Suite.exe
   {
 
-    IfEqual, data1, 22
+    if getKeyState("LCtrl", "P") != true and getKeyState("LAlt", "P") != true
+
     {
 
-      if data2 between 1 and 10
+      IfEqual, data1, 22
       {
-        SendInput {Shift down}{Right %data2%}{Shift up}
+
+        if data2 between 1 and 10
+        {
+          SendInput {Shift down}{Right %data2%}{Shift up}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Shift down}{Left %datanew%}{Shift up}
+        }
+
       }
 
-      if data2 between 120 and 127
+      IfEqual, data1, 23
       {
-        datanew := 128-data2
-        SendInput {Shift down}{Left %datanew%}{Shift up}
+
+        if data2 between 1 and 10
+        {
+          SendInput {Shift down}{Down %data2%}{Shift up}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Shift down}{Up %datanew%}{Shift up}
+        }
+
+      }
+
+      IfEqual, data1, 24
+      {
+
+        if data2 between 1 and 10
+        {
+          datanew := (data2)
+          SendInput {WheelDown %datanew%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := (128-data2)
+          SendInput {WheelUp %datanew%}
+        }
+
+      }
+
+      IfEqual, data1, 25
+      {
+
+        if data2 between 1 and 10
+        {
+          datanew := (data2)*4
+          SendInput {WheelDown %datanew%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := (128-data2)*4
+          SendInput {WheelUp %datanew%}
+        }
+
+      }
+
+      IfEqual, data1, 26
+      {
+
+        if data2 between 1 and 10
+        {
+          SendInput {Enter %data2%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Backspace %datanew%}
+        }
+
+      }
+
+      IfEqual, data1, 50
+      {
+
+        if data2 between 1 and 10
+        {
+          SendInput {Right %data2%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Left %datanew%}
+        }
+
+      }
+
+      IfEqual, data1, 51
+      {
+
+        if data2 between 1 and 10
+        {
+          SendInput {Down %data2%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Up %datanew%}
+        }
+
       }
 
     }
 
-    IfEqual, data1, 23
+    if getKeyState("LCtrl", "P")
     {
 
-      if data2 between 1 and 10
+      IfEqual, data1, 50
       {
-        SendInput {Shift down}{Down %data2%}{Shift up}
-      }
 
-      if data2 between 120 and 127
-      {
-        datanew := 128-data2
-        SendInput {Shift down}{Up %datanew%}{Shift up}
+        if data2 between 1 and 10
+        {
+          SendInput {Ctrl down}{Tab %data2%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Ctrl down}{Shift down}{Tab %datanew%}{Shift up}
+        }
+
       }
 
     }
 
-    IfEqual, data1, 24
+    if getKeyState("LAlt", "P")
     {
 
-      if data2 between 1 and 10
+      IfEqual, data1, 50
       {
-        datanew := (data2)
-        SendInput {WheelDown %datanew%}
-      }
 
-      if data2 between 120 and 127
-      {
-        datanew := (128-data2)
-        SendInput {WheelUp %datanew%}
-      }
+        if data2 between 1 and 10
+        {
+          SendInput {Alt down}{Tab %data2%}
+        }
 
-    }
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Alt down}{Shift down}{Tab %datanew%}{Shift up}
+        }
 
-    IfEqual, data1, 25
-    {
-
-      if data2 between 1 and 10
-      {
-        datanew := (data2)*4
-        SendInput {WheelDown %datanew%}
-      }
-
-      if data2 between 120 and 127
-      {
-        datanew := (128-data2)*4
-        SendInput {WheelUp %datanew%}
-      }
-
-    }
-
-    IfEqual, data1, 26
-    {
-
-      if data2 between 1 and 10
-      {
-        SendInput {Enter %data2%}
-      }
-
-      if data2 between 120 and 127
-      {
-        datanew := 128-data2
-        SendInput {Backspace %datanew%}
-      }
-
-    }
-
-    IfEqual, data1, 50
-    {
-
-      if data2 between 1 and 10
-      {
-        SendInput {Right %data2%}
-      }
-
-      if data2 between 120 and 127
-      {
-        datanew := 128-data2
-        SendInput {Left %datanew%}
-      }
-
-    }
-
-    IfEqual, data1, 51
-    {
-
-      if data2 between 1 and 10
-      {
-        SendInput {Down %data2%}
-      }
-
-      if data2 between 120 and 127
-      {
-        datanew := 128-data2
-        SendInput {Up %datanew%}
       }
 
     }
