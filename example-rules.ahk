@@ -26,14 +26,42 @@ if statusbyte between 176 and 191
   WinGet, application, ProcessName, A
   ;MsgBox, %application%
 
-  ;Only if Ableton Live 10 active
+  ;Ableton Live 10
 
   if application = Ableton Live 10 Suite.exe
   {
 
-    SendKey(50, "Left", "Right", data1, data2)
+    IfEqual, data1, 51
+    {
 
-    SendKey(51, "Up", "Down", data1, data2)
+      if data2 between 1 and 10
+      {
+        SendInput {Down %data2%}
+      }
+
+      if data2 between 120 and 127
+      {
+        datanew := 128-data2
+        SendInput {Up %datanew%}
+      }
+
+    }
+
+    IfEqual, data1, 50
+    {
+
+      if data2 between 1 and 10
+      {
+        SendInput {Right %data2%}
+      }
+
+      if data2 between 120 and 127
+      {
+        datanew := 128-data2
+        SendInput {Left %datanew%}
+      }
+
+    }
 
   }
 
@@ -42,13 +70,9 @@ if statusbyte between 176 and 191
   if application != Ableton Live 10 Suite.exe
   {
 
-    ; Only when all modifier key are off, process these commands
-
     if getKeyState("LCtrl", "P") != true and getKeyState("LAlt", "P") != true
 
     {
-
-      ; Complex rules for multi key combinations
 
       IfEqual, data1, 22
       {
@@ -82,21 +106,89 @@ if statusbyte between 176 and 191
 
       }
 
-      ; Simple rules for single key macros
+      IfEqual, data1, 24
+      {
 
-      SendKey(24, "Up", "Down", data1, data2, 8)
+        if data2 between 1 and 10
+        {
+          datanew := (data2) * 8
+          SendInput {Down %datanew%}
+        }
 
-      SendKey(25, "WheelUp", "WheelDown", data1, data2, 2)
+        if data2 between 120 and 127
+        {
+          datanew := (128-data2) * 8
+          SendInput {Up %datanew%}
+        }
 
-      SendKey(26, "Backspace", "Enter", data1, data2)
+      }
 
-      SendKey(50, "Left", "Right", data1, data2)
+      IfEqual, data1, 25
+      {
 
-      SendKey(51, "Up", "Down", data1, data2)
+        if data2 between 1 and 10
+        {
+          datanew := (data2)*4
+          SendInput {WheelDown %datanew%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := (128-data2)*4
+          SendInput {WheelUp %datanew%}
+        }
+
+      }
+
+      IfEqual, data1, 26
+      {
+
+        if data2 between 1 and 10
+        {
+          SendInput {Enter %data2%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Backspace %datanew%}
+        }
+
+      }
+
+      IfEqual, data1, 50
+      {
+
+        if data2 between 1 and 10
+        {
+          SendInput {Right %data2%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Left %datanew%}
+        }
+
+      }
+
+      IfEqual, data1, 51
+      {
+
+        if data2 between 1 and 10
+        {
+          SendInput {Down %data2%}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Up %datanew%}
+        }
+
+      }
 
     }
-
-    ; Only when modifiers key Ctrl is on
 
     if getKeyState("LCtrl", "P")
     {
@@ -119,8 +211,6 @@ if statusbyte between 176 and 191
 
     }
 
-    ; Only when modifier key Alt is on
-
     if getKeyState("LAlt", "P")
     {
 
@@ -142,9 +232,8 @@ if statusbyte between 176 and 191
 
     }
 
+  }
 
-  } ; End application filter
-
-} ; End statusbyte cc
+}
 
 Return

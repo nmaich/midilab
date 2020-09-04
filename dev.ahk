@@ -1,12 +1,20 @@
-/*
-Hotkey, ~^s, ReloadThis
+dev:
 
 
-ReloadThis:
-Reload
-MsgBox
+Loop
+{
+
+  ; Define global keyboard shortcuts here
+
+  if getKeyState("LCtrl", "P") and getKeyState("LAlt", "P") and getKeyState("S", "P")
+  {
+
+    Sleep 250
+    Reload
+    Sleep 5000
+
+  }
+
+}
+
 return
-
-Hotkeys not working yet in this context
-Need to check the reason
-*/
