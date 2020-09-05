@@ -5,9 +5,40 @@ rules:
 ; Get foreground application
 
 WinGet, application, ProcessName, A
+inc := data2
+dec := 128-data2
 
 ;MsgBox, %application%
 
+
+
+; Define global vars for functions
+
+global cc, data1
+
+
+
+; Defince helper vars or functions
+
+if data2 between 1 and 10
+{
+  cc = "positive"
+}
+
+if data2 between 120 and 127
+{
+  cc = "negative"
+}
+
+
+
+ccnum(ccnum)
+{
+  IfEqual, data1, %ccnum%
+  {
+    return true
+  }
+}
 
 
 
@@ -41,9 +72,9 @@ if statusbyte between 176 and 191
   if application = Ableton Live 10 Suite.exe
   {
 
-    SendKey(50, "Left", "Right", data1, data2)
+    SendKey(50, "Left", "Right")
 
-    SendKey(51, "Up", "Down", data1, data2)
+    SendKey(51, "Up", "Down")
 
   }
 
@@ -56,129 +87,123 @@ if statusbyte between 176 and 191
 
     ; Only when all modifier keys are off, process these commands
 
-    if !getKeyState("LCtrl", "P") and !getKeyState("LAlt", "P") and !getKeyState("Shift", "P")
+    if !getKeyState("LCtrl") and !getKeyState("LAlt") and !getKeyState("Shift")
 
     {
 
       ; Complex rules for multi key combinations
 
-      IfEqual, data1, 22
+      if ccnum(22)
       {
 
-        if data2 between 1 and 10
+        if cc = "negative"
         {
-          SendInput {Shift down}{Right %data2%}{Shift up}
+          SendInput {Shift down}{Left %dec%}{Shift up}
         }
 
-        if data2 between 120 and 127
+        if cc = "positive"
         {
-          datanew := 128-data2
-          SendInput {Shift down}{Left %datanew%}{Shift up}
+          SendInput {Shift down}{Right %inc%}{Shift up}
         }
 
       }
 
-      IfEqual, data1, 23
+      if ccnum(23)
       {
 
-        if data2 between 1 and 10
+        if cc = "negative"
         {
-          SendInput {Shift down}{Down %data2%}{Shift up}
+          SendInput {Shift down}{Up %dec%}{Shift up}
         }
 
-        if data2 between 120 and 127
+        if cc = "positive"
         {
-          datanew := 128-data2
-          SendInput {Shift down}{Up %datanew%}{Shift up}
+          SendInput {Shift down}{Down %inc%}{Shift up}
         }
 
       }
 
-      IfEqual, data1, 26
+      if ccnum(26)
       {
 
-        if data2 between 1 and 10
+        if cc = "negative"
+        {
+          SendInput {Alt down}{Up %dec%}{Alt up}
+        }
+
+        if cc = "positive"
         {
           SendInput {Enter}
-        }
-
-        if data2 between 120 and 127
-        {
-          datanew := 128-data2
-          SendInput {Alt down}{Up %datanew%}{Alt up}
         }
 
       }
 
       ; Simple rules for single key macros
-      ; cc, key1, key2, data1, data2, repeat-keypress
+      ; cc, key1, key2, repeat-keypress
 
-      SendKey(24, "Up", "Down", data1, data2, 8)
+      SendKey(24, "Up", "Down", 8)
 
-      SendKey(25, "WheelUp", "WheelDown", data1, data2, 2)
+      SendKey(25, "WheelUp", "WheelDown", 2)
 
-      SendKey(50, "Left", "Right", data1, data2)
+      SendKey(50, "Left", "Right")
 
-      SendKey(51, "Up", "Down", data1, data2)
+      SendKey(51, "Up", "Down")
 
-      ; SendKey(26, "Alt Up", "Enter", data1, data2)
+      ; SendKey(26, "Alt Up", "Enter")
 
     }
 
     ; Only when modifiers key Ctrl is on
 
-    if getKeyState("Shift", "P")
+    if getKeyState("Shift")
     {
 
-      IfEqual, data1, 50
+      if ccnum(50)
       {
 
-        if data2 between 1 and 10
+        if cc = "negative"
         {
-          SendInput {Shift down}{Right %data2%}
+          SendInput {Shift down}{Left %dec%}
         }
 
-        if data2 between 120 and 127
+        if cc = "positive"
         {
-          datanew := 128-data2
-          SendInput {Shift down}{Left %datanew%}
+          SendInput {Shift down}{Right %inc%}
         }
 
       }
 
-      IfEqual, data1, 51
+      if ccnum(51)
       {
 
-        if data2 between 1 and 10
+        if cc = "negative"
         {
-          SendInput {Shift down}{Down %data2%}
+          SendInput {Shift down}{Up %dec%}
         }
 
-        if data2 between 120 and 127
+        if cc = "positive"
         {
-          datanew := 128-data2
-          SendInput {Shift down}{Up %datanew%}
+          SendInput {Shift down}{Down %inc%}
         }
 
       }
 
     }
 
-    if getKeyState("LCtrl", "P")
+    if getKeyState("LCtrl")
     {
 
-      IfEqual, data1, 50
+      if ccnum(50)
       {
 
-        if data2 between 1 and 10
+        if cc = "negative"
         {
-          SendInput {Ctrl down}{Tab %data2%}
+          SendInput {Ctrl down}{Shift down}{Tab %dec%}{Shift up}
         }
 
-        if data2 between 120 and 127
+        if cc = "positive"
         {
-          datanew := 128-data2
-          SendInput {Ctrl down}{Shift down}{Tab %datanew%}{Shift up}
+          SendInput {Ctrl down}{Tab %inc%}
         }
 
       }
@@ -187,21 +212,20 @@ if statusbyte between 176 and 191
 
     ; Only when modifier key Alt is on
 
-    if getKeyState("LAlt", "P")
+    if getKeyState("LAlt")
     {
 
-      IfEqual, data1, 50
+      if ccnum(50)
       {
 
-        if data2 between 1 and 10
+        if cc = "negative"
         {
-          SendInput {Alt down}{Tab %data2%}
+          SendInput {Alt down}{Shift down}{Tab %dec%}{Shift up}
         }
 
-        if data2 between 120 and 127
+        if cc = "positive"
         {
-          datanew := 128-data2
-          SendInput {Alt down}{Shift down}{Tab %datanew%}{Shift up}
+          SendInput {Alt down}{Tab %inc%}
         }
 
       }
