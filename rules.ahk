@@ -7,6 +7,8 @@ rules:
 WinGet, application, ProcessName, A
 inc := data2
 dec := 128-data2
+type := stb
+ccnum := data1
 
 ;MsgBox, %application%
 
@@ -14,7 +16,7 @@ dec := 128-data2
 
 ; Define global vars for functions
 
-global cc, data1
+global cc, data1, stb
 
 
 
@@ -32,19 +34,9 @@ if data2 between 120 and 127
 
 
 
-ccnum(ccnum)
-{
-  IfEqual, data1, %ccnum%
-  {
-    return true
-  }
-}
-
-
-
 ; Process note-on messages
 
-if statusbyte between 144 and 159
+if type = "noteon"
 {
   ; No rules set
 }
@@ -53,7 +45,7 @@ if statusbyte between 144 and 159
 
 ; Process note-off messages
 
-if statusbyte between 128 and 143
+if type = "noteoff"
 {
   MidiInDisplay(%stb%, %statusbyte%, %chan%, %data1%, %data2%)  ; display note off in gui
 }
@@ -62,7 +54,7 @@ if statusbyte between 128 and 143
 
 ; Process cc messages
 
-if statusbyte between 176 and 191
+if type = "cc"
 {
 
 
@@ -93,7 +85,7 @@ if statusbyte between 176 and 191
 
       ; Complex rules for multi key combinations
 
-      if ccnum(22)
+      if ccnum = 22
       {
 
         if cc = "negative"
@@ -108,7 +100,7 @@ if statusbyte between 176 and 191
 
       }
 
-      if ccnum(23)
+      if ccnum = 23
       {
 
         if cc = "negative"
@@ -123,7 +115,7 @@ if statusbyte between 176 and 191
 
       }
 
-      if ccnum(26)
+      if ccnum = 26
       {
 
         if cc = "negative"
@@ -149,8 +141,6 @@ if statusbyte between 176 and 191
 
       SendKey(51, "Up", "Down")
 
-      ; SendKey(26, "Alt Up", "Enter")
-
     }
 
     ; Only when modifiers key Ctrl is on
@@ -158,7 +148,7 @@ if statusbyte between 176 and 191
     if getKeyState("Shift")
     {
 
-      if ccnum(50)
+      if ccnum = 50
       {
 
         if cc = "negative"
@@ -173,7 +163,7 @@ if statusbyte between 176 and 191
 
       }
 
-      if ccnum(51)
+      if ccnum = 51
       {
 
         if cc = "negative"
@@ -193,7 +183,7 @@ if statusbyte between 176 and 191
     if getKeyState("LCtrl")
     {
 
-      if ccnum(50)
+      if ccnum = 50
       {
 
         if cc = "negative"
@@ -215,7 +205,7 @@ if statusbyte between 176 and 191
     if getKeyState("LAlt")
     {
 
-      if ccnum(50)
+      if ccnum = 50
       {
 
         if cc = "negative"

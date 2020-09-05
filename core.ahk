@@ -2,11 +2,14 @@
 ;*      MIDI INPUT DETECTION
 ;              PARSE FUNCTION
 ;*************************************************
+
+
 /*
   Midi messages are made up of several sections
   Statusbyte, midi channel, data1, data2 - they are all combined into one midi message
   https://www.nyu.edu/classes/bello/FMT_files/9_MIDI_code.pdf
 */
+
 
 MidiMsgDetect(hInput, midiMsg, wMsg) ; Midi input section in calls this function each time a midi message is received. Then the midi message is broken up into parts for manipulation.  See http://www.midi.org/techspecs/midimessages.php (decimal values).
 {
@@ -19,15 +22,15 @@ MidiMsgDetect(hInput, midiMsg, wMsg) ; Midi input section in calls this function
   pitchb        := (data2 << 7) | data1          ;(midiMsg >> 8) & 0x7F7F  masking to extract the pbs
   ; =============== assign stb variable for display only ; ===============
   if statusbyte between 176 and 191   ; Is message a CC
-  stb := "CC"                                        ; if so then set stb to CC - only used with the midi monitor
+  stb = "cc"                                        ; if so then set stb to CC - only used with the midi monitor
   if statusbyte between 144 and 159   ; Is message a Note On
-  stb := "NoteOn"                               ; Set gui var
+  stb = "noteon"                               ; Set gui var
   if statusbyte between 128 and 143   ; Is message a Note Off?
-  stb := "NoteOff"                              ; set gui to NoteOff
+  stb = "noteoff"                              ; set gui to NoteOff
   if statusbyte between 192 and 208   ;Program Change
-  stb := "PC"
+  stb = "pc"
   if statusbyte between 224 and 239   ; Is message a Pitch Bend
-  stb := "PitchB"                                 ; Set gui to pb
+  stb = "pitchb"                                 ; Set gui to pb
 
   MidiInDisplay(stb, statusbyte, chan, data1, data2) ; ===============Show midi input on midi monitor display ; ===============
   gosub, rules                                                        ; =============== run rules label to organize
