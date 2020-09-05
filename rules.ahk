@@ -94,6 +94,22 @@ if statusbyte between 176 and 191
 
       }
 
+      IfEqual, data1, 26
+      {
+
+        if data2 between 1 and 10
+        {
+          SendInput {Enter}
+        }
+
+        if data2 between 120 and 127
+        {
+          datanew := 128-data2
+          SendInput {Alt down}{Up %datanew%}{Alt up}
+        }
+
+      }
+
       ; Simple rules for single key macros
       ; cc, key1, key2, data1, data2, repeat-keypress
 
@@ -101,11 +117,11 @@ if statusbyte between 176 and 191
 
       SendKey(25, "WheelUp", "WheelDown", data1, data2, 2)
 
-      SendKey(26, "Backspace", "Enter", data1, data2)
-
       SendKey(50, "Left", "Right", data1, data2)
 
       SendKey(51, "Up", "Down", data1, data2)
+
+      ; SendKey(26, "Alt Up", "Enter", data1, data2)
 
     }
 
