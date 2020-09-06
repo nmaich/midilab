@@ -43,22 +43,39 @@ global data1, data2
 SendKey(num, key1, key2, multi=1, mod1="none", mod2="none")
 {
 
-  ;Msgbox %num%
-
   IfEqual, data1, %num%
   {
 
-    ;MsgBox, %num%
-    if data2 between 1 and 10
-    {
-      datanew := (data2)*multi
-      SendInput {%key2% %datanew%}
-    }
-
     if data2 between 120 and 127
     {
+
       datanew := (128-data2)*multi
+
+      if (mod1 != none) and (mod2 = none)
+      SendInput {%mod1% down}{%key1% %datanew%}{%mod1% up}
+
+      if mod2 != none
+      SendInput {%mod2% down}{%mod1% down}{%key1% %datanew%}
+
+      if mod1 = none
       SendInput {%key1% %datanew%}
+
+    }
+
+    if data2 between 1 and 10
+    {
+
+      datanew := (data2)*multi
+
+      if (mod1 != none) and (mod2 = none)
+      SendInput {%mod1% down}{%key2% %datanew%}{%mod1% up}
+
+      if mod2 != none
+      SendInput {%mod2% down}{%mod1% down}{%key2% %datanew%}
+
+      if mod1 = none
+      SendInput {%key2% %datanew%}
+
     }
 
   }

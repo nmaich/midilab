@@ -145,7 +145,7 @@ if type = "cc"
 
     ; Only when modifiers key Ctrl is on
 
-    if getKeyState("Shift")
+    if getKeyState("Shift") and !getKeyState("LCtrl")
     {
 
       if ccnum = 50
@@ -180,7 +180,15 @@ if type = "cc"
 
     }
 
-    if getKeyState("LCtrl")
+    if getKeyState("LCtrl") and getKeyState("Shift")
+    {
+
+      SendKey(50, "Left", "Right",1 ,"Ctrl", "Shift")
+
+    }
+
+
+    if getKeyState("LCtrl") and !getKeyState("Shift")
     {
 
       if ccnum = 50
