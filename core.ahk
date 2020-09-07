@@ -51,14 +51,15 @@ SendKey(num, key1, key2, multi=1, mod1="none", mod2="none")
 
       datanew := (128-data2)*multi
 
-      if (mod1 != none) and (mod2 = none)
+      if (mod1 == "none")
+      SendInput {%key1% %datanew%}
+
+      if (mod1 <> "none" && mod2 == "none")
       SendInput {%mod1% down}{%key1% %datanew%}{%mod1% up}
 
-      if mod2 != none
+      if (mod1 <> "none" && mod2 <> "none")
       SendInput {%mod2% down}{%mod1% down}{%key1% %datanew%}
 
-      if mod1 = none
-      SendInput {%key1% %datanew%}
 
     }
 
@@ -67,14 +68,14 @@ SendKey(num, key1, key2, multi=1, mod1="none", mod2="none")
 
       datanew := (data2)*multi
 
-      if (mod1 != none) and (mod2 = none)
+      if (mod1 == "none")
+      SendInput {%key2% %datanew%}
+
+      if (mod1 <> "none" && mod2 == "none")
       SendInput {%mod1% down}{%key2% %datanew%}{%mod1% up}
 
-      if mod2 != none
+      if (mod1 <> "none" && mod2 <> "none")
       SendInput {%mod2% down}{%mod1% down}{%key2% %datanew%}
-
-      if mod1 = none
-      SendInput {%key2% %datanew%}
 
     }
 
