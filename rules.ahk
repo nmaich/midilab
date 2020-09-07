@@ -183,7 +183,7 @@ if type = "cc"
     if getKeyState("LCtrl") and getKeyState("Shift")
     {
 
-      SendKey(50, "Left", "Right",1 ,"Ctrl", "Shift")
+      SendKey(50, "Left", "Right", 1, "Ctrl", "Shift")
 
     }
 
@@ -191,7 +191,10 @@ if type = "cc"
     if getKeyState("LCtrl") and !getKeyState("Shift")
     {
 
-      if ccnum = 50
+      SendKey(50, "Left", "Right", 1, "Ctrl")
+
+
+      if ccnum = 22
       {
 
         if cc = "negative"
@@ -213,7 +216,7 @@ if type = "cc"
     if getKeyState("LAlt")
     {
 
-      if ccnum = 50
+      if ccnum = 22
       {
 
         if cc = "negative"
