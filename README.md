@@ -114,17 +114,17 @@ Technical information about MIDI messages and the most important variables used 
 - http://www.MIDI.org/techspecs/MIDImessages.php
 
 
-### Example message
+### Messages
 
-The first parameter is the status byte, the 2nd parameter is the number byte, and the 3rd parameter is the value byte. See a raw example message below:
+Each incoming message consists of following variables: status (statusbyte), number (data1) and value (data2). The value of each variable is transformed to an easier to read format. Here is an example of a raw MIDI message:
 
 | status | number | value |
 |---|---|---|
 | 10010011 | 00011011 | 0111111 |
 
-### Ranges
+### Status
 
-The following status types are defined by the status number of the incoming MIDI message:
+The following message types are defined by the status number of the incoming MIDI message:
 
 | status | type |
 | - | - |
@@ -139,7 +139,8 @@ The most important vars are type, number and value. They contain different infor
 
 | type | number | value |
 | - | - | - |
-| note-on / note-off | number | velocity |
+| note-off | number | velocity |
+| note-on | number | velocity |
 | cc | number | value |
 | pc | number | ignored |
 
