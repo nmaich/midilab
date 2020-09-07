@@ -74,48 +74,48 @@ return ;  Ends autoexec section
 ;*****************************************************************
 
 RelayCC: ; ===============THIS FOR RELAYING CC'S OR TRANSLATING MIDI CC'S
-stb := "CC"                                                                                               ; Only used in the midi display - has nothing to do with message output
-MidiOutDisplay(stb, statusbyte, chan , CC_num, data2)                      ; update the midimonitor gui
+type := "CC"                                                                                               ; Only used in the midi display - has nothing to do with message output
+MidiOutDisplay(type, statusbyte, chan , CC_num, value)                      ; update the midimonitor gui
 midiOutShortMsg(h_midiout, (Channel+175), CC_num, CCIntVal)   ; SEND OUT THE MESSAGE > function located in Midi_In_Out_Lib.ahk;MsgBox, 0, ,sendcc triggered , 1 ; for testing purposes only
 Return
 
 SendCC: ; ===============use this for converting keypress into midi message
 midiOutShortMsg(h_midiout, (Channel+175), CC_num, CCIntVal) ; SEND OUT THE MESSAGE > function located in Midi_In_Out_Lib.ahk
 ; =============== set vars for display only ;  get these to be the same vars as midi send messages
-stb := "CC"
+type := "CC"
 statusbyte := (Channel+174)
-data1 = %CC_num%			; set value of the data1 to the above cc_num for display on the midi out window (only needed if you want to see output)
-data2 = %CCIntVal%
-MidiOutDisplay(stb, statusbyte, channel, data1, data2) ; ; update the midimonitor gui
+number = %CC_num%			; set value of the number to the above cc_num for display on the midi out window (only needed if you want to see output)
+value = %CCIntVal%
+MidiOutDisplay(type, statusbyte, channel, number, value) ; ; update the midimonitor gui
 ;MsgBox, 0, ,sendcc triggered , 1 ; for testing purposes only
 Return
 
 RelayNote:   ;(h_midiout,Note) ; send out note messages ; this should probably be a funciton but... eh
-midiOutShortMsg(h_midiout, statusbyte, data1, data2) ; call the midi funcitons with these params.
-stb := "NoteOn"
-MidiOutDisplay(stb, statusbyte, chan, data1, data2)
+midiOutShortMsg(h_midiout, statusbyte, number, value) ; call the midi funcitons with these params.
+type := "NoteOn"
+MidiOutDisplay(type, statusbyte, chan, number, value)
 Return
 
 SendNote:   ;(h_midiout,Note) ; send out note messages ; this should probably be a funciton but... eh
-note = %data1%                                      ; this var is added to allow transpostion of a note
-vel = %data2%
+note = %number%                                      ; this var is added to allow transpostion of a note
+vel = %value%
 midiOutShortMsg(h_midiout, statusbyte, note, vel) ; call the midi funcitons with these params.
-stb := "NoteOn"
+type := "NoteOn"
 statusbyte := 144
 chan 	= %channel%
-data1 = %Note%			; set value of the data1 to the above cc_num for display on the midi out window (only needed if you want to see output)
-data2 = %Vel%
-MidiOutDisplay(stb, statusbyte, chan, data1, data2)
+number = %Note%			; set value of the number to the above cc_num for display on the midi out window (only needed if you want to see output)
+value = %Vel%
+MidiOutDisplay(type, statusbyte, chan, number, value)
 Return
 
-SendPC: ; Send a progam change message - data2 is ignored - I think...
-midiOutShortMsg(h_midiout, (Channel+191), pc, data2)
-stb := "PC"
+SendPC: ; Send a progam change message - value is ignored - I think...
+midiOutShortMsg(h_midiout, (Channel+191), pc, value)
+type := "PC"
 statusbyte := 192
 chan 	= %channel%
-data1 = %PC%			; set value of the data1 to the above cc_num for display on the midi out window (only needed if you want to see output)
-data2 =
-MidiOutDisplay(stb, statusbyte, chan, data1, data2)
+number = %PC%			; set value of the number to the above cc_num for display on the midi out window (only needed if you want to see output)
+value =
+MidiOutDisplay(type, statusbyte, chan, number, value)
 Return
 
 /*

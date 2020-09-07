@@ -85,7 +85,7 @@ This is old information kept for the sake of, i actually dont know why. 🙂 The
 
 *Rules*
 
-There are a few ways to handle transformations. Set up a filter to detect correct type and data1 val - then run commands or set up filter after type filter (NoteOn, NoteOff, CC or PC). Keep rules together under the proper section, notes, cc, program change etc. Keep them after the statusbyte has been determined. Examples for each type of rule are present.
+There are a few ways to handle transformations. Set up a filter to detect correct type and number val - then run commands or set up filter after type filter (NoteOn, NoteOff, CC or PC). Keep rules together under the proper section, notes, cc, program change etc. Keep them after the statusbyte has been determined. Examples for each type of rule are present.
 
 
 *This information is deprecated but kept as a reference to older versions.*

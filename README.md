@@ -35,8 +35,8 @@ SendKey($input, $key1, $key2)
 ~~~
 
 - $input =  note or cc number that the rule should react to eg. 22
-- $key1 = key being sent when a negative (data2) value is received eg. "Backspace"
-- $key2 = key being sent out when a positive (data2) value is received eg. "Enter"
+- $key1 = key being sent when a negative (value) value is received eg. "Backspace"
+- $key2 = key being sent out when a positive (value) value is received eg. "Enter"
 
 To get a little more complex there are additional (optional) parameters you can use to send out key combinations:
 
@@ -116,9 +116,9 @@ Technical information about MIDI messages and the most important variables used 
 
 ### Example message
 
-The first parameter is the status byte, the 2nd parameter is the data1 byte, and the 3rd parameter is the data2 byte. See a raw example message below:
+The first parameter is the status byte, the 2nd parameter is the number byte, and the 3rd parameter is the value byte. See a raw example message below:
 
-| status | data1 | data2 |
+| status | number | value |
 |---|---|---|
 | 10010011 | 00011011 | 0111111 |
 
@@ -126,7 +126,7 @@ The first parameter is the status byte, the 2nd parameter is the data1 byte, and
 
 The following status types are defined by the status number of the incoming MIDI message:
 
-| range | stb |
+| range | type |
 | - | - |
 | 128 - 143 | note-off |
 | 144 - 159 | note-on |
@@ -135,9 +135,9 @@ The following status types are defined by the status number of the incoming MIDI
 
 ### Variables
 
-The most important vars are stb, data1 and data2. They contain different information depending on the status type of the message:
+The most important vars are type, number and value. They contain different information depending on the status type of the message:
 
-| stb | data1 | data2 |
+| type | number | value |
 | - | - | - |
 | note-on / note-off | number | velocity |
 | cc | number | value |
@@ -147,9 +147,9 @@ The most important vars are stb, data1 and data2. They contain different informa
 
 I want to refactor the code more and more to make things easier to read and write. The codebase is quite chaotic. Some variable names are hard to identify and there are other usability issues.
 
-- Rename data1 to number
-- Rename data2 to value
-- Rename stb to type
+- Rename number to number
+- Rename value to value
+- Rename type to type
 - Complex rules that are easier to write
 - Cleaner and leaner code
 - Rename rules.ahk to midi-in.ahk

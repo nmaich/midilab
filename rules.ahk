@@ -5,10 +5,10 @@ rules:
 ; Get foreground application
 
 WinGet, application, ProcessName, A
-inc := data2
-dec := 128-data2
-type := stb
-ccnum := data1
+inc := value
+dec := 128-value
+type := type
+ccnum := number
 
 ;MsgBox, %application%
 
@@ -16,18 +16,18 @@ ccnum := data1
 
 ; Define global vars for functions
 
-global cc, data1, stb
+global cc, number, type
 
 
 
 ; Defince helper vars or functions
 
-if data2 between 1 and 10
+if value between 1 and 10
 {
   cc = "positive"
 }
 
-if data2 between 120 and 127
+if value between 120 and 127
 {
   cc = "negative"
 }
@@ -47,7 +47,7 @@ if type = "noteon"
 
 if type = "noteoff"
 {
-  MidiInDisplay(%stb%, %statusbyte%, %chan%, %data1%, %data2%)  ; display note off in gui
+  MidiInDisplay(%type%, %statusbyte%, %chan%, %number%, %value%)  ; display note off in gui
 }
 
 

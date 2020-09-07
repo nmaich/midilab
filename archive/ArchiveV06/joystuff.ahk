@@ -57,7 +57,7 @@ stick: ; label for running joystick detection
 
     If (joyXVal != joyx_last) ; if it has moved then send another message.
      {
-       stb = CC
+       type = CC
        statusbyte = 176 ; chan 1 + 175
        byte1 = %joyXnum%
        byte2 = %joyXval%
@@ -69,7 +69,7 @@ stick: ; label for running joystick detection
      }
     if (joyYval != joyY_last)
      {
-       stb = CC
+       type = CC
        statusbyte = 176 ; chan 1 + 175
        byte1 = %joyYnum%
        byte2 = %joyYval%
@@ -80,7 +80,7 @@ stick: ; label for running joystick detection
     }
     If (joyRVal != joyR_last)
      {
-       stb = CC
+       type = CC
        statusbyte = 176 ; chan 1 + 175
        byte1 = %joyRnum%
        byte2 = %joyRval%
@@ -92,7 +92,7 @@ stick: ; label for running joystick detection
      }
     if (joyzval != joyZ_last)
      {
-       stb = CC
+       type = CC
        statusbyte = 176 ; chan 1 + 175
        byte1 = %joyZnum%
        byte2 = %joyZval%

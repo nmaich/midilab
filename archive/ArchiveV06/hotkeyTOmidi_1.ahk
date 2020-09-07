@@ -31,7 +31,7 @@ Loop	; loop to detect the state of the hotkey, held down.
     CCIntVal := CCIntVal > 0 ? CCIntVal-1 : 0                 	; check min value of 0 is reached.
     midiOutShortMsg(h_midiout, (Channel+175), CC_num, CCIntVal) 	; Send midi output (h_midiout=port, (channel+CC statusbyte), CC_num=2lines up, CCIntVal) function located under the hood
     ; =============== needed for output gui display only
-    stb := "CC"
+    type := "CC"
     statusbyte := 176
     chan = %channel%
     byte1 = %cc_num%			; set value of the byte1 to the above cc_num for display on the midi out window (only needed if you want to see output)
@@ -53,7 +53,7 @@ Loop 	; loop to detect the state of the hotkey, held down.
   CCIntVal := CCIntVal < 127 ? CCIntVal+1 : 127   ; check for max value 127, reached.
   midiOutShortMsg(h_midiout, (Channel+175), CCnum, CCIntVal)    ; midiport, cc = 176, CCmod is var above, CCIntVal in vars above
     ; =============== needed for output gui display only
-    stb := "CC"
+    type := "CC"
     statusbyte := 176
     chan = %channel%
     byte1 = %cc_num%			; set value of the byte1 to the above cc_num for display on the midi out window (only needed if you want to see output)

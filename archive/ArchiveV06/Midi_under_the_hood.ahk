@@ -34,16 +34,16 @@
 MidiPortRefresh: ; get the list of ports
 
  MIlist := MidiInsList(NumPorts)
-	Loop Parse, MIlist, |
-		{
-		}
-	TheChoice := MidiInDevice + 1
+  Loop Parse, MIlist, |
+    {
+    }
+  TheChoice := MidiInDevice + 1
 
 MOlist := MidiOutsList(NumPorts2)
    Loop Parse, MOlist, |
-		{
-		}
-	TheChoice2 := MidiOutDevice + 1
+    {
+    }
+  TheChoice2 := MidiOutDevice + 1
 
 return
 
@@ -167,13 +167,13 @@ MidiSet: ; midi port selection gui
   Gui, 4: Add, Text, x10 y+10 w175 Center , Midi In Port  ;Just text label
   Gui, 4: font, s8
   ; midi ins list box
-  Gui, 4: Add, ListBox, x10 w200 h100  Choose%TheChoice% vMidiInPort gDoneInChange AltSubmit, %MiList% ; --- midi in listing of ports
+  Gui, 4: Add, Litypeox, x10 w200 h100  Choose%TheChoice% vMidiInPort gDoneInChange AltSubmit, %MiList% ; --- midi in listing of ports
     ;Gui,  Add, DropDownList, x10 w200 h120 Choose%TheChoice% vMidiInPort gDoneInChange altsubmit, %MiList%  ; ( you may prefer this style, may need tweak)
 
   ; --------------- MidiOutSet ---------------------
   Gui, 4: Add, TEXT,  x220 y40 w175 Center, Midi Out Port ; gDoneOutChange
   ; midi outlist box
-  Gui, 4: Add, ListBox, x220 y62 w200 h100 Choose%TheChoice2% vMidiOutPort gDoneOutChange AltSubmit, %MoList% ; --- midi out listing
+  Gui, 4: Add, Litypeox, x220 y62 w200 h100 Choose%TheChoice2% vMidiOutPort gDoneOutChange AltSubmit, %MoList% ; --- midi out listing
   ;Gui,  Add, DropDownList, x220 y97 w200 h120 Choose%TheChoice2% vMidiOutPort gDoneOutChange altsubmit , %MoList%
   Gui, 4: add, Button, x10 w205 gSet_Done, Done - Reload script.
   Gui, 4: add, Button, xp+205 w205 gCancel, Cancel
@@ -184,7 +184,7 @@ MidiSet: ; midi port selection gui
 
 Return
 
-;-----------------gui done change stuff - see label in both gui listbox line
+;-----------------gui done change stuff - see label in both gui litypeox line
 
 
 
@@ -192,9 +192,9 @@ Return
 ;44444444444444444444444444 NEED TO EDIT THIS TO REFLECT CHANGES IN GENMCE PRIOR TO SEND OUT
 
 DoneInChange:
-	gui +lastfound
-	Gui, Submit, NoHide
-	Gui, Flash
+  gui +lastfound
+  Gui, Submit, NoHide
+  Gui, Flash
   Gui, 4: Submit, NoHide
   Gui, 4: Flash
   If %MidiInPort%
@@ -341,8 +341,8 @@ Return
 MidiInsList(ByRef NumPorts)   ; should work for unicode now... untested
   { ; Returns a "|"-separated list of midi output devices
     local List, MidiInCaps, PortName, result, midisize
-	(A_IsUnicode)? offsetWordStr := 64: offsetWordStr := 32
-	midisize := offsetWordStr + 18
+  (A_IsUnicode)? offsetWordStr := 64: offsetWordStr := 32
+  midisize := offsetWordStr + 18
     VarSetCapacity(MidiInCaps, midisize, 0)
     VarSetCapacity(PortName, offsetWordStr)                       ; PortNameSize 32
 
@@ -356,7 +356,7 @@ MidiInsList(ByRef NumPorts)   ; should work for unicode now... untested
             List .= "|-Error-"
             Continue
           }
-		PortName := StrGet(&MidiInCaps + 8, offsetWordStr)
+    PortName := StrGet(&MidiInCaps + 8, offsetWordStr)
         List .= "|" PortName
       }
     Return SubStr(List,2)
@@ -438,9 +438,9 @@ MidiInsEnumerate() { ; Returns number of midi output devices, creates global arr
 MidiOutsList(ByRef NumPorts)
   { ; Returns a "|"-separated list of midi output devices
     local List, MidiOutCaps, PortName, result, midisize
-	(A_IsUnicode)? offsetWordStr := 64: offsetWordStr := 32
-	midisize := offsetWordStr + 18
-	VarSetCapacity(MidiOutCaps, midisize, 0)
+  (A_IsUnicode)? offsetWordStr := 64: offsetWordStr := 32
+  midisize := offsetWordStr + 18
+  VarSetCapacity(MidiOutCaps, midisize, 0)
     VarSetCapacity(PortName, offsetWordStr)                       ; PortNameSize 32
 
     NumPorts := DllCall("winmm.dll\midiOutGetNumDevs") ; #midi output devices on system, First device ID = 0
@@ -453,7 +453,7 @@ MidiOutsList(ByRef NumPorts)
             List .= "|-Error-"
             Continue
           }
-		PortName := StrGet(&MidiOutCaps + 8, offsetWordStr)
+    PortName := StrGet(&MidiOutCaps + 8, offsetWordStr)
         List .= "|" PortName
       }
     Return SubStr(List,2)

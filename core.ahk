@@ -6,50 +6,50 @@
 
 /*
   Midi messages are made up of several sections
-  Statusbyte, midi channel, data1, data2 - they are all combined into one midi message
+  Statusbyte, midi channel, number, value - they are all combined into one midi message
   https://www.nyu.edu/classes/bello/FMT_files/9_MIDI_code.pdf
 */
 
 
 MidiMsgDetect(hInput, midiMsg, wMsg) ; Midi input section in calls this function each time a midi message is received. Then the midi message is broken up into parts for manipulation.  See http://www.midi.org/techspecs/midimessages.php (decimal values).
 {
-  global statusbyte, chan, note, cc, data1, data2, stb, pitchb ; Make these vars gobal to be used in other functions
+  global statusbyte, chan, note, cc, number, value, type, pitchb ; Make these vars gobal to be used in other functions
   ; ===============; Extract Variables by extracting from midi message
   statusbyte :=  midiMsg & 0xFF                ; Extract statusbyte = what type of midi message and what midi channel
   chan          := (statusbyte & 0x0f) + 1      ; WHAT MIDI CHANNEL IS THE MESSAGE ON? EXTRACT FROM STATUSBYTE
-  data1         := (midiMsg >> 8) & 0xFF     ; THIS IS DATA1 VALUE = NOTE NUMBER OR CC NUMBER
-  data2         := (midiMsg >> 16) & 0xFF   ; DATA2 VALUE IS NOTE VELEOCITY OR CC VALUE
-  pitchb        := (data2 << 7) | data1          ;(midiMsg >> 8) & 0x7F7F  masking to extract the pbs
-  ; =============== assign stb variable for display only ; ===============
+  number         := (midiMsg >> 8) & 0xFF     ; THIS IS number VALUE = NOTE NUMBER OR CC NUMBER
+  value         := (midiMsg >> 16) & 0xFF   ; value VALUE IS NOTE VELEOCITY OR CC VALUE
+  pitchb        := (value << 7) | number          ;(midiMsg >> 8) & 0x7F7F  masking to extract the pbs
+  ; =============== assign type variable for display only ; ===============
   if statusbyte between 176 and 191   ; Is message a CC
-  stb = "cc"                                        ; if so then set stb to CC - only used with the midi monitor
+  type = "cc"                                        ; if so then set type to CC - only used with the midi monitor
   if statusbyte between 144 and 159   ; Is message a Note On
-  stb = "noteon"                               ; Set gui var
+  type = "noteon"                               ; Set gui var
   if statusbyte between 128 and 143   ; Is message a Note Off?
-  stb = "noteoff"                              ; set gui to NoteOff
+  type = "noteoff"                              ; set gui to NoteOff
   if statusbyte between 192 and 208   ;Program Change
-  stb = "pc"
+  type = "pc"
   if statusbyte between 224 and 239   ; Is message a Pitch Bend
-  stb = "pitchb"                                 ; Set gui to pb
+  type = "pitchb"                                 ; Set gui to pb
 
-  MidiInDisplay(stb, statusbyte, chan, data1, data2) ; ===============Show midi input on midi monitor display ; ===============
+  MidiInDisplay(type, statusbyte, chan, number, value) ; ===============Show midi input on midi monitor display ; ===============
   gosub, rules                                                        ; =============== run rules label to organize
 } ; =============== ; end of MidiMsgDetect funciton
 Return
 
 
-global data1, data2
+global number, value
 
 SendKey(num, key1, key2, multi=1, mod1="none", mod2="none")
 {
 
-  IfEqual, data1, %num%
+  IfEqual, number, %num%
   {
 
-    if data2 between 120 and 127
+    if value between 120 and 127
     {
 
-      datanew := (128-data2)*multi
+      datanew := (128-value)*multi
 
       if (mod1 == "none")
       SendInput {%key1% %datanew%}
@@ -63,10 +63,10 @@ SendKey(num, key1, key2, multi=1, mod1="none", mod2="none")
 
     }
 
-    if data2 between 1 and 10
+    if value between 1 and 10
     {
 
-      datanew := (data2)*multi
+      datanew := (value)*multi
 
       if (mod1 == "none")
       SendInput {%key2% %datanew%}
@@ -88,11 +88,11 @@ return
 ;*    SHOW MIDI INPUT ON GUI MONITOR
 ;*************************************************
 
-MidiInDisplay(stb, statusbyte, chan, data1, data2)   ; update the midimonitor gui - see below
+MidiInDisplay(type, statusbyte, chan, number, value)   ; update the midimonitor gui - see below
 {
   Gui,14:default
   Gui,14:ListView, In1                                             ; see the first listview midi in monitor
-  LV_Add("",stb,statusbyte,chan,data1,data2)  ; Setting up the columns for gui
+  LV_Add("",type,statusbyte,chan,number,value)  ; Setting up the columns for gui
   LV_ModifyCol(1,"center")
   LV_ModifyCol(2,"center")
   LV_ModifyCol(3,"center")
@@ -109,11 +109,11 @@ return
 ;*    SHOW MIDI OUTPUT ON GUI MONITOR
 ;*************************************************
 
-MidiOutDisplay(stb, statusbyte, chan, data1, data2) ;  update the midimonitor gui
+MidiOutDisplay(type, statusbyte, chan, number, value) ;  update the midimonitor gui
 {
   Gui,14:default
   Gui,14:ListView, Out1 ; see the second listview midi out monitor
-  LV_Add("",stb,statusbyte,chan,data1,data2)
+  LV_Add("",type,statusbyte,chan,number,value)
   LV_ModifyCol(1,"center")
   LV_ModifyCol(2,"center")
   LV_ModifyCol(3,"center")
@@ -137,8 +137,8 @@ gui,14:add,text, x80 y5, Midi Input ; %TheChoice%
 Gui,14:Add, DropDownList, x40 y20 w140 Choose%TheChoice% vMidiInPort gDoneInChange altsubmit, %MiList%  ; (
 gui,14:add,text, x305 y5, Midi Ouput ; %TheChoice2%
 Gui,14:Add, DropDownList, x270 y20 w140  Choose%TheChoice2% vMidiOutPort gDoneOutChange altsubmit , %MoList%
-Gui,14:Add, ListView, x5 r11 w220 Backgroundblack caqua Count10 vIn1,  EventType|StatB|Ch|data1|data2|
-gui,14:Add, ListView, x+5 r11 w220 Backgroundblack cyellow Count10 vOut1,  EventType|StatB|Ch|data1|data2|
+Gui,14:Add, ListView, x5 r11 w220 Backgroundblack caqua Count10 vIn1,  EventType|StatB|Ch|number|value|
+gui,14:Add, ListView, x+5 r11 w220 Backgroundblack cyellow Count10 vOut1,  EventType|StatB|Ch|number|value|
 Gui, 14: add, Button, x10 w205 gSet_Done, Done - Reload script.
 Gui, 14: add, Button, xp+205 w205 gCancel, Cancel
 gui,14:Show, autosize xcenter y5, MidiMonitor
