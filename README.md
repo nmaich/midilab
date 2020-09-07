@@ -126,7 +126,7 @@ The first parameter is the status byte, the 2nd parameter is the number byte, an
 
 The following status types are defined by the status number of the incoming MIDI message:
 
-| range | type |
+| status | type |
 | - | - |
 | 128 - 143 | note-off |
 | 144 - 159 | note-on |
@@ -147,9 +147,6 @@ The most important vars are type, number and value. They contain different infor
 
 I want to refactor the code more and more to make things easier to read and write. The codebase is quite chaotic. Some variable names are hard to identify and there are other usability issues.
 
-- Rename number to number
-- Rename value to value
-- Rename type to type
 - Complex rules that are easier to write
 - Cleaner and leaner code
 - Rename rules.ahk to midi-in.ahk
