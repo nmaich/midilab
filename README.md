@@ -2,80 +2,155 @@
 
 ## Introduction
 
-Midilab is an application written in Autohotkey, that gives you the ability to remap MIDI messages to keystrokes, mouse clicks or mousewheel turns. It's not limited to theses things though. The full power of AHK can be used to transform MIDI input. Be creative.
+MIDIlab is an application written in Autohotkey, that gives you the ability to remap MIDI messages to keystrokes, key combinations, mouse clicks or mousewheel turns. It's not limited to theses things though. The full power of AHK can be used to transform MIDI input. Be creative.
 
-It also gives you the ability to send MIDI messages by pressing keys on your keyboard or using your mouse or any other HID device. This is a very powerful library, but with rather poor documentation and structure. My aim is to make it universally useful by cleaning up the code and reviving the project.
+It also gives you the ability to send MIDI messages by pressing keys on your keyboard or using your mouse or any other HID device. This is a very powerful library, but with rather poor documentation and structure. My aim is to make it universally usefull by cleaning up the code and making it more userfriendly.
 
-If you are interested in contributing (this also goes out to the original creator of this project) please go ahead and create a commit, pull request or just ping me on github or by email. I'm happy to receive any support necessary to lift this project to new heights.
+If you are interested in contributing (this also goes out to the original creator of this project) please go ahead and create a commit, pull request or just ping me on github or by email. I'm happy to receive any support.
 
 ## Files
 
-Let's start with a list of files and their purpose.
+Let's start with a list of files and their purpose:
 
-| File | Description |
-| --- | -- |
-| rules.ahk | Rules for transforming MIDI input to keypresses or any other output |
-| hotkeys.ahk | Examples of hotkey generated MIDI messages to be output - the easy way! |
-| hotkeys_alt.ahk | Examples of hotkey generated MIDI messages to be output - the best way! |
+| File | Description | Status |
+| --- | -- | -- |
+| rules.ahk | Rules for transforming MIDI input to keypresses or any other output | Clean & WIP
+| hotkeys.ahk | Easy way to generate MIDI messages with hotkeys | Needs cleanup |
+| hotkeys_alt.ahk | Alternative more complex way of generating MIDI messages | Needs cleanup |
 
-## MIDI Messages
+## Rules
 
-References:
+
+This section (rules.ahk) transforms incoming MIDI messages based on a set of user defined rules. Any MIDI input as noteons, noteoffs, continuous controllers (cc) and program change (pc) messages can be used to define them. You can transform MIDI input to key strokes, key combinations, mouse movements, actions or other type of MIDI output. Note: This script does not, currently, pass the original MIDI messsage out.
+
+There are two ways of defining a MIDI to output rule: A simple or a complex rule. Let's start with the syntax for the simple rule format below.
+
+
+### Simple rules
+
+The simple rule syntax for sending out keys or mouse actions is built the following way:
+
+~~~
+SendKey($input, $key1, $key2)
+~~~
+
+- $input =  note or cc number that the rule should react to eg. 22
+- $key1 = key being sent when a negative (data2) value is received eg. "Backspace"
+- $key2 = key being sent out when a positive (data2) value is received eg. "Enter"
+
+To get a little more complex there are additional (optional) parameters you can use to send out key combinations:
+
+~~~
+SendKey($input, $key1, $key2, $repeat, $mod1, $mod2)
+~~~
+
+- $repeats = number of times the key should be pressed eg. 4 for four times
+- $mod1 = modifier key one that should be sent out eg. "Ctrl"
+- $mod2 = modifier key two that should be sent out additionaly "Shift"
+
+Here are some examples of simple rules that trigger different keys or key combinations:
+
+~~~
+SendKey(24, "Up", "Down", 8)
+
+SendKey(25, "WheelUp", "WheelDown", 2)
+
+SendKey(50, "Left", "Right")
+
+SendKey(51, "Up", "Down")
+
+SendKey(50, "Left", "Right", 1, "Ctrl", "Shift")
+
+SendKey(50, "Left", "Right", 1, "Ctrl")
+~~~
+
+### Complex rules
+
+Documentation coming soon...
+
+~~~
+if getKeyState("Shift") and !getKeyState("LCtrl")
+{
+
+  if ccnum = 50
+  {
+
+    if cc = "negative"
+    {
+      SendInput {Shift down}{Left %dec%}
+    }
+
+    if cc = "positive"
+    {
+      SendInput {Shift down}{Right %inc%}
+    }
+
+  }
+
+  if ccnum = 51
+  {
+
+    if cc = "negative"
+    {
+      SendInput {Shift down}{Up %dec%}
+    }
+
+    if cc = "positive"
+    {
+      SendInput {Shift down}{Down %inc%}
+    }
+
+  }
+
+}
+~~~
+
+## Technical information
+
+Technical information about MIDI messages and the most important variables used in this project.
+
+### References
 - https://stackoverflow.com/questions/29481090/explanation-of-MIDI-messages
 - http://www.MIDI.org/techspecs/MIDImessages.php
 
-First parameter is the status byte, 2nd parameter is the data1 byte, and 3rd parameter is the data2 byte
 
 ### Example message
+
+The first parameter is the status byte, the 2nd parameter is the data1 byte, and the 3rd parameter is the data2 byte. See a raw example message below:
 
 | status | data1 | data2 |
 |---|---|---|
 | 10010011 | 00011011 | 0111111 |
 
-### Parameters explained
+### Ranges
 
-| Parameter | Description |
-| -- | -- |
-| status | Type of message (note on/off, CC, program change... + the MIDI channel) |
-| data1 | MIDI note number (for note messages), cc number (for CC messages) |
-| data2 | MIDI note velocity (for note on/off messages, cc value (for cc messages) |
+The following status types are defined by the status number of the incoming MIDI message:
 
-## Rules
+| range | stb |
+| - | - |
+| 128 - 143 | note-off |
+| 144 - 159 | note-on |
+| 176 - 191 | cc |
+| 192 - 208	 | pc |
 
+### Variables
 
-This section deals with transforming incoming MIDI messages. This means: noteons, noteoffs, continuous controllers (cc) and program change (pc) messages. You can transform the midi input to keystrokes like a macro or transform the midi input to other type of MIDI output. Both are possible in the same script. This script does not, currently, pass the original midi messsage out.
+The most important vars are stb, data1 and data2. They contain different information depending on the status type of the message:
 
-There are a few ways to handle transformations. Set up a filter to detect correct type and data1 val - then run commands or set up filter after type filter (NoteOn, NoteOff, CC or PC). Keep rules together under the proper section, notes, cc, program change etc. Keep them after the statusbyte has been determined. Examples for each type of rule are present.
-
-### Status
-
-statusbyte between 128 and 143 ARE NOTE OFF'S
-statusbyte between 144 and 159 ARE NOTE ON'S
-statusbyte between 176 and 191 ARE CONTINUOS CONTROLLERS
-statusbyte between 192 and 208  ARE PROGRAM CHANGE for data1 values
-
-### Helpers
-
-| status | data1 | data2 |
+| stb | data1 | data2 |
 | - | - | - |
-| note on/off | note number | note velocity |
-| continuous controller | cc number | cc value |
-| program change | pc number | ignored |
+| note-on / note-off | number | velocity |
+| cc | number | value |
+| pc | number | ignored |
 
-### Example code
+## Todos
 
-~~~
-ifequal, data1, 20  #if the note number coming in is note # 20
-{
-  data1 := 21  #shift the note up
-  gosub, SendNote  #then send the note out
-}
-~~~
+I want to refactor the code more and more to make things easier to read and write. The codebase is quite chaotic. Some variable names are hard to identify and there are other usability issues.
 
-## Old readme
-
-*This information is deprecated but kept as a reference to older versions.*
-
-Generic MIDI App - renamed from Generic MIDI Program Basic structural framework for a MIDI program in ahk. The description of what this is for is contained in the first post on the topic MIDI Input/Output Combined at the ahk forum. Please read it, if you want to know more. I have added a few more examples for different MIDI data types as well as more, meaningful (I hope), documentation to the script. You are strongly encouraged to visit http://www.MIDI.org/techspecs/MIDImessages.php (decimal values), to learn more about MIDI data.  It will help you create your own MIDI rules.
-
-I have combined much of the work of others here. You will need to create your own MIDI rules; By creating or modifying if statements in the section of the rules.ahk file. By creating hotkeys that generate MIDI messages in the hotkeyTOMIDI.ahk file.  I don't claim to be an expert on this, just a guy who pulled disparate things together. I really need help from someone to add sysex functionality.  Notes - All MIDI in/out lib stuff is included in MIDI_In_Out_Lib.ahk, besides winmm.dll (part of windows).
+- Rename data1 to number
+- Rename data2 to value
+- Rename stb to type
+- Complex rules that are easier to write
+- Cleaner and leaner code
+- Rename rules.ahk to midi-in.ahk
+- Rename hotkeys.ahk to midi-out.ahk

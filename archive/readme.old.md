@@ -75,3 +75,22 @@ Version history
   + Adding more examples for rules.
   + more to come, maybe...
   + removed that notemsg var - did not need it, not sure why i used it... nevermind
+
+
+
+  ## Archive
+
+This is old information kept for the sake of, i actually dont know why. 🙂 There you go...
+
+
+*Rules*
+
+There are a few ways to handle transformations. Set up a filter to detect correct type and data1 val - then run commands or set up filter after type filter (NoteOn, NoteOff, CC or PC). Keep rules together under the proper section, notes, cc, program change etc. Keep them after the statusbyte has been determined. Examples for each type of rule are present.
+
+
+*This information is deprecated but kept as a reference to older versions.*
+
+Generic MIDI App - renamed from Generic MIDI Program Basic structural framework for a MIDI program in ahk. The description of what this is for is contained in the first post on the topic MIDI Input/Output Combined at the ahk forum. Please read it, if you want to know more. I have added a few more examples for different MIDI data types as well as more, meaningful (I hope), documentation to the script. You are strongly encouraged to visit http://www.MIDI.org/techspecs/MIDImessages.php (decimal values), to learn more about MIDI data.  It will help you create your own MIDI rules.
+
+I have combined much of the work of others here. You will need to create your own MIDI rules; By creating or modifying if statements in the section of the rules.ahk file. By creating hotkeys that generate MIDI messages in the hotkeyTOMIDI.ahk file.  I don't claim to be an expert on this, just a guy who pulled disparate things together. I really need help from someone to add sysex functionality.  Notes - All MIDI in/out lib stuff is included in MIDI_In_Out_Lib.ahk, besides winmm.dll (part of windows).
+
