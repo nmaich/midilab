@@ -16,7 +16,7 @@ ccnum := number
 
 ; Define global vars for functions
 
-global change, number, type
+global cc, number, type
 
 
 
@@ -24,12 +24,12 @@ global change, number, type
 
 if value between 1 and 10
 {
-  change = "positive"
+  cc = "positive"
 }
 
 if value between 120 and 127
 {
-  change = "negative"
+  cc = "negative"
 }
 
 
@@ -88,12 +88,12 @@ if type = "cc"
       if ccnum = 22
       {
 
-        if change = "negative"
+        if cc = "negative"
         {
           SendInput {Shift down}{Left %dec%}{Shift up}
         }
 
-        if change = "positive"
+        if cc = "positive"
         {
           SendInput {Shift down}{Right %inc%}{Shift up}
         }
@@ -103,12 +103,12 @@ if type = "cc"
       if ccnum = 23
       {
 
-        if change = "negative"
+        if cc = "negative"
         {
           SendInput {Shift down}{Up %dec%}{Shift up}
         }
 
-        if change = "positive"
+        if cc = "positive"
         {
           SendInput {Shift down}{Down %inc%}{Shift up}
         }
@@ -118,12 +118,12 @@ if type = "cc"
       if ccnum = 26
       {
 
-        if change = "negative"
+        if cc = "negative"
         {
           SendInput {Alt down}{Up %dec%}{Alt up}
         }
 
-        if change = "positive"
+        if cc = "positive"
         {
           SendInput {Enter}
         }
@@ -153,12 +153,12 @@ if type = "cc"
       if ccnum = 50
       {
 
-        if change = "negative"
+        if cc = "negative"
         {
           SendInput {Shift down}{Left %dec%}
         }
 
-        if change = "positive"
+        if cc = "positive"
         {
           SendInput {Shift down}{Right %inc%}
         }
@@ -168,12 +168,12 @@ if type = "cc"
       if ccnum = 51
       {
 
-        if change = "negative"
+        if cc = "negative"
         {
           SendInput {Shift down}{Up %dec%}
         }
 
-        if change = "positive"
+        if cc = "positive"
         {
           SendInput {Shift down}{Down %inc%}
         }
@@ -199,6 +199,25 @@ if type = "cc"
 
       SendCode(22, "{Ctrl down}{Shift down}{Tab}{Shift up}", "{Ctrl down}{Tab}")
 
+/*
+
+      if ccnum = 22
+      {
+
+        if cc = "negative"
+        {
+          SendInput {Ctrl down}{Shift down}{Tab %dec%}{Shift up}
+        }
+
+        if cc = "positive"
+        {
+          SendInput {Ctrl down}{Tab %inc%}
+        }
+
+      }
+
+*/
+
     }
 
     ; Only when modifier key Alt is on
@@ -206,7 +225,20 @@ if type = "cc"
     if getKeyState("Alt")
     {
 
-      SendCode(22, "{Alt down}{Shift down}{Tab}{Shift up}", "{Alt down}{Tab}")
+      if ccnum = 22
+      {
+
+        if cc = "negative"
+        {
+          SendInput {Alt down}{Shift down}{Tab %dec%}{Shift up}
+        }
+
+        if cc = "positive"
+        {
+          SendInput {Alt down}{Tab %inc%}
+        }
+
+      }
 
     }
 

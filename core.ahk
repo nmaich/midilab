@@ -40,6 +40,7 @@ Return
 
 global number, value
 
+
 SendKey(num, key1, key2, multi=1, mod1="none", mod2="none")
 {
 
@@ -85,7 +86,40 @@ SendKey(num, key1, key2, multi=1, mod1="none", mod2="none")
 
 return
 
-SendCode(num, combo1, combo2, multi=1, mod1="none", mod2="none")
+SendCode(num, keycode1, keycode2, multi=1)
+{
+
+  IfEqual, number, %num%
+  {
+
+    if value between 120 and 127
+    {
+
+      datanew := (128-value)*multi
+
+      Loop %datanew%
+      SendInput %keycode1%
+
+    }
+
+    if value between 1 and 10
+    {
+
+      datanew := (value)*multi
+
+      Loop %datanew%
+      SendInput %keycode2%
+
+    }
+
+  }
+
+}
+
+return
+
+
+SendCodeAlternative(num, keycode1, keycode2, multi=1, mod1="none", mod2="none")
 {
 
   IfEqual, number, %num%
@@ -99,7 +133,7 @@ SendCode(num, combo1, combo2, multi=1, mod1="none", mod2="none")
       if (mod1 == "none")
       {
         Loop %datanew%
-        SendInput %combo1%
+        SendInput %keycode1%
       }
 
       ;MsgBox "%mod1%"
@@ -107,13 +141,13 @@ SendCode(num, combo1, combo2, multi=1, mod1="none", mod2="none")
       if (mod1 == "Ctrl") && (getKeyState("Ctrl"))
       {
         Loop %datanew%
-        SendInput %combo1%
+        SendInput %keycode1%
       }
 
       if (mod1 == "Alt") && (getKeyState("Alt"))
       {
         Loop %datanew%
-        SendInput %combo1%
+        SendInput %keycode1%
       }
 
 
@@ -127,19 +161,19 @@ SendCode(num, combo1, combo2, multi=1, mod1="none", mod2="none")
       if (mod1 == "none")
       {
         Loop %datanew%
-        SendInput %combo2%
+        SendInput %keycode2%
       }
 
       if (mod1 == "Ctrl") && (getKeyState("Ctrl"))
       {
         Loop %datanew%
-        SendInput %combo2%
+        SendInput %keycode2%
       }
 
       if (mod1 == "Alt") && (getKeyState("Alt"))
       {
         Loop %datanew%
-        SendInput %combo2%
+        SendInput %keycode2%
       }
 
     }
