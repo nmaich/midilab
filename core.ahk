@@ -82,6 +82,72 @@ SendKey(num, key1, key2, multi=1, mod1="none", mod2="none")
   }
 
 }
+
+return
+
+SendCode(num, combo1, combo2, multi=1, mod1="none", mod2="none")
+{
+
+  IfEqual, number, %num%
+  {
+
+    if value between 120 and 127
+    {
+
+      datanew := (128-value)*multi
+
+      if (mod1 == "none")
+      {
+        Loop %datanew%
+        SendInput %combo1%
+      }
+
+      ;MsgBox "%mod1%"
+
+      if (mod1 == "Ctrl") && (getKeyState("Ctrl"))
+      {
+        Loop %datanew%
+        SendInput %combo1%
+      }
+
+      if (mod1 == "Alt") && (getKeyState("Alt"))
+      {
+        Loop %datanew%
+        SendInput %combo1%
+      }
+
+
+    }
+
+    if value between 1 and 10
+    {
+
+      datanew := (value)*multi
+
+      if (mod1 == "none")
+      {
+        Loop %datanew%
+        SendInput %combo2%
+      }
+
+      if (mod1 == "Ctrl") && (getKeyState("Ctrl"))
+      {
+        Loop %datanew%
+        SendInput %combo2%
+      }
+
+      if (mod1 == "Alt") && (getKeyState("Alt"))
+      {
+        Loop %datanew%
+        SendInput %combo2%
+      }
+
+    }
+
+  }
+
+}
+
 return
 
 ;*************************************************
@@ -90,8 +156,8 @@ return
 
 MidiInDisplay(type, statusbyte, chan, number, value)   ; update the midimonitor gui - see below
 {
-  Gui,14:default
-  Gui,14:ListView, In1                                             ; see the first listview midi in monitor
+  Gui, 14:default
+  Gui, 14:ListView, In1                                             ; see the first listview midi in monitor
   LV_Add("",type,statusbyte,chan,number,value)  ; Setting up the columns for gui
   LV_ModifyCol(1,"center")
   LV_ModifyCol(2,"center")
@@ -111,8 +177,8 @@ return
 
 MidiOutDisplay(type, statusbyte, chan, number, value) ;  update the midimonitor gui
 {
-  Gui,14:default
-  Gui,14:ListView, Out1 ; see the second listview midi out monitor
+  Gui, 14:default
+  Gui, 14:ListView, Out1 ; see the second listview midi out monitor
   LV_Add("",type,statusbyte,chan,number,value)
   LV_ModifyCol(1,"center")
   LV_ModifyCol(2,"center")
@@ -131,17 +197,23 @@ return
 ;*************************************************
 
 midiMon: ; midi monitor gui with listviews
-gui,14:destroy
-gui,14:default
-gui,14:add,text, x80 y5, Midi Input ; %TheChoice%
-Gui,14:Add, DropDownList, x40 y20 w140 Choose%TheChoice% vMidiInPort gDoneInChange altsubmit, %MiList%  ; (
-gui,14:add,text, x305 y5, Midi Ouput ; %TheChoice2%
-Gui,14:Add, DropDownList, x270 y20 w140  Choose%TheChoice2% vMidiOutPort gDoneOutChange altsubmit , %MoList%
-Gui,14:Add, ListView, x5 r11 w220 Backgroundblack caqua Count10 vIn1,  EventType|StatB|Ch|number|value|
-gui,14:Add, ListView, x+5 r11 w220 Backgroundblack cyellow Count10 vOut1,  EventType|StatB|Ch|number|value|
-Gui, 14: add, Button, x10 w205 gSet_Done, Done - Reload script.
-Gui, 14: add, Button, xp+205 w205 gCancel, Cancel
-gui,14:Show, autosize xcenter y5, MidiMonitor
+
+posx := A_ScreenWidth - 480
+posy := A_ScreenHeight - 380
+; MsgBox %posx%
+
+Gui, 14: destroy
+Gui, 14: default
+Gui, 14: add, text, x80 y5, MIDI Input ; %TheChoice%
+Gui, 14: Add, DropDownList, x40 y20 w140 Choose%TheChoice% vMidiInPort gDoneInChange altsubmit -tabstop, %MiList%  ; (
+Gui, 14: add, text, x305 y5, MIDI Ouput ; %TheChoice2%
+Gui, 14: Add, DropDownList, x270 y20 w140  Choose%TheChoice2% vMidiOutPort gDoneOutChange altsubmit -tabstop, %MoList%
+Gui, 14: Add, ListView, x5 r11 w220 Backgroundblack caqua Count10 vIn1 -tabstop,  type|status|channel|number|value|
+Gui, 14: Add, ListView, x+5 r11 w220 Backgroundblack cyellow Count10 vOut1 -tabstop,  type|status|channel|number|value|
+Gui, 14: +AlwaysOnTop
+Gui, 14: add, Button, x5 w220 gSet_Done, Save && Reload
+Gui, 14: add, Button, xp+225 w220 gCancel, Cancel
+Gui, 14: show, autosize x%posx% y%posy%, IO Monitor
 
 Return
 

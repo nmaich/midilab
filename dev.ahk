@@ -17,4 +17,8 @@ Loop
 
 }
 
+!^m::
+GoSub, Midimon
+return
+
 return

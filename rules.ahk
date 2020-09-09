@@ -141,6 +141,8 @@ if type = "cc"
 
       SendKey(51, "Up", "Down")
 
+      SendCode(33, "{Left}", "{Right}")
+
     }
 
     ; Only when modifiers key Ctrl is on
@@ -191,8 +193,9 @@ if type = "cc"
     if getKeyState("LCtrl") and !getKeyState("Shift")
     {
 
-      SendKey(50, "Left", "Right", 1, "Ctrl")
+      SendCode(33, "^+{Left}", "^+{Right}")
 
+      SendKey(50, "Left", "Right", 1, "Ctrl")
 
       if ccnum = 22
       {
