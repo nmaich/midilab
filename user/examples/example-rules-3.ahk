@@ -85,35 +85,30 @@ if type = "cc"
 
       ; Complex rules for multi key combinations
 
-      if ccnum = 22
-      {
+      SendCode(22,"+{Left}","+{Right}")
 
-        if change = "negative"
-        {
-          SendInput {Shift down}{Left %dec%}{Shift up}
-        }
+      SendCode(23,"+{Up}","+{Down}")
 
-        if change = "positive"
-        {
-          SendInput {Shift down}{Right %inc%}{Shift up}
-        }
+;
+;       if ccnum = 23
+;       {
+;
+;         if change = "negative"
+;         {
+;           SendInput {Shift down}{Up %dec%}{Shift up}
+;         }
+;
+;         if change = "positive"
+;         {
+;           SendInput {Shift down}{Down %inc%}{Shift up}
+;         }
+;
+;       }
 
-      }
+      SendCode(26,"!{Up}", "{Enter}")
 
-      if ccnum = 23
-      {
 
-        if change = "negative"
-        {
-          SendInput {Shift down}{Up %dec%}{Shift up}
-        }
-
-        if change = "positive"
-        {
-          SendInput {Shift down}{Down %inc%}{Shift up}
-        }
-
-      }
+/*
 
       if ccnum = 26
       {
@@ -129,6 +124,8 @@ if type = "cc"
         }
 
       }
+
+*/
 
       ; Simple rules for single key macros
       ; cc, key1, key2, repeat-keypress

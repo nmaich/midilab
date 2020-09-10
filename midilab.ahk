@@ -2,10 +2,13 @@
 Menu, Tray, Icon, C:\Tools\AHK\Icons\Rocket.ico
 #Persistent
 #SingleInstance , force         	                                                    ; Only run one instance
-SendMode Input                              	                                ; Recommended for new scripts due to its superior speed and reliability.
+#InstallKeybdHook
+
+SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%
 
 ; Ensures a consistent starting directory.
+
 if A_OSVersion in WIN_NT4,WIN_95,WIN_98,WIN_ME  ; If not Windows XP or greater, quit program
 {
   MsgBox This script requires Windows 2000/XP or later.
@@ -125,9 +128,9 @@ Return
 ;*              INCLUDE FILES -
 ;*  these files need to be in the same folder
 ;*************************************************
-#Include core.ahk       ; this file replaced the midi in out lib below - for now
-#Include rules.ahk              ; this file contains: Rules for manipulating midi input then sending modified midi output.
-#Include dev.ahk
+#Include core/core.ahk       ; this file replaced the midi in out lib below - for now
+#Include core/develop.ahk
+#Include user/midi-in.ahk              ; this file contains: Rules for manipulating midi input then sending modified midi output.
 
 ;#Include hotkeys.ahk         ; this file contains: examples of HOTKEY generated midi messages to be output - the easy way!
 ;#Include hotkeys_alt.ahk         ; this file contains: examples of HOTKEY generated midi messages to be output - the BEST way!

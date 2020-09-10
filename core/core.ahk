@@ -329,7 +329,7 @@ ResetAll:                                                                 ; prog
 MsgBox, 33, %version% - Reset All?, This will delete ALL settings`, and restart this program!
 IfMsgBox, OK
 {
-  FileDelete, %version%.ini                             ; delete the ini file to reset ports, probably a better way to do this ...
+  FileDelete, core/%version%.ini                             ; delete the ini file to reset ports, probably a better way to do this ...
   Reload                                                            ; restart the app.
 }
 IfMsgBox, Cancel
@@ -383,10 +383,10 @@ ReadIni()                                         ; Read .ini file to load port 
   Menu, tray, add, ResetAll          ; DELETE THE .INI FILE - a new config needs to be set up
   menu, tray, add, MidiMon        ; Menu item for the midi monitor
   global MidiInDevice, MidiOutDevice, version ; version var is set at the beginning.
-  IfExist, %version%.ini
+  IfExist, core/%version%.ini
   {
-    IniRead, MidiInDevice, %version%.ini, Settings, MidiInDevice , %MidiInDevice%            ; read the midi In port from ini file
-    IniRead, MidiOutDevice, %version%.ini, Settings, MidiOutDevice , %MidiOutDevice%   ; read the midi out port from ini file
+    IniRead, MidiInDevice, core/%version%.ini, Settings, MidiInDevice , %MidiInDevice%            ; read the midi In port from ini file
+    IniRead, MidiOutDevice, core/%version%.ini, Settings, MidiOutDevice , %MidiOutDevice%   ; read the midi out port from ini file
   }
   Else                                                                                    ; no ini exists and this is either the first run or reset settings.
   {
@@ -405,10 +405,10 @@ ReadIni()                                         ; Read .ini file to load port 
 WriteIni()                                                                  ; Write selections to .ini file
 {
   global MidiInDevice, MidiOutDevice, version
-  IfNotExist, %version%.ini                                   ; if no .ini
-  FileAppend,, %version%.ini                              ; make  .ini with the following entries.
-  IniWrite, %MidiInDevice%, %version%.ini, Settings, MidiInDevice
-  IniWrite, %MidiOutDevice%, %version%.ini, Settings, MidiOutDevice
+  IfNotExist, core/%version%.ini                                   ; if no .ini
+  FileAppend,, core/%version%.ini                              ; make  .ini with the following entries.
+  IniWrite, %MidiInDevice%, core/%version%.ini, Settings, MidiInDevice
+  IniWrite, %MidiOutDevice%, core/%version%.ini, Settings, MidiOutDevice
 }
 
 ;*************************************************
