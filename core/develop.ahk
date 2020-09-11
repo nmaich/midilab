@@ -6,19 +6,22 @@ Loop
 
   ; Define global keyboard shortcuts here
 
-  if getKeyState("LCtrl", "P") and getKeyState("LAlt", "P") and getKeyState("S", "P")
+  if getKeyState("Ctrl") and getKeyState("Alt") and getKeyState("s")
   {
 
     Sleep 250
     Reload
-    Sleep 5000
+    Sleep 500
 
   }
 
 }
 
-!^m::
-GoSub, Midimon
 return
 
+!^m::
+
+GoSub, Midimon
+
 return
+
