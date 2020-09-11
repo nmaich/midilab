@@ -2,21 +2,33 @@
 
 ## Introduction
 
-MIDIlab is an application written in Autohotkey, that gives you the ability to remap MIDI messages to keystrokes, key combinations, mouse clicks or mousewheel turns. It's not limited to theses things though. The full power of AHK can be used to transform MIDI input. Be creative.
+Midilab is an application written in Autohotkey, that gives you the ability to remap MIDI messages to keystrokes, key combinations, mouse clicks or mousewheel turns. It's not limited to theses things though. The full power of AHK can be used to transform MIDI input. Be creative.
 
-It also gives you the ability to send MIDI messages by pressing keys on your keyboard or using your mouse or any other HID device. This is a very powerful library, but with rather poor documentation and structure. My aim is to make it universally usefull by cleaning up the code and making it more userfriendly.
+It also gives you the ability to send MIDI messages by pressing keys on your keyboard or using your mouse or any other HID device. Midilab is based on a very powerful library that unfortunatly has rather poor documentation & structure. My aim is to make it universally usefull by cleaning up the code, adding new features & making it more userfriendly.
 
-If you are interested in contributing (this also goes out to the original creator of this project) please go ahead and create a commit, pull request or just ping me on github or by email. I'm happy to receive any support.
+## Installation
+
+- Download the current version of AHK at https://www.autohotkey.com/ or https://www.autohotkey.com/download/
+- Run the application by launching midilab.ahk
+- Make sure the app runs in the correct folder if you eg. create a shortcut
+
+## Keyboard Shortcuts
+
+- Ctrl+Alt+S = Reload the script
+- Ctrl+Alt+M = Open the IO Monitor
 
 ## Files
 
-Let's start with a list of files and their purpose:
+Let's start with a list of important files & folders and their purpose:
 
 | File | Description | Status |
 | --- | -- | -- |
-| rules.ahk | Rules for transforming MIDI input to keypresses or any other output | Clean & WIP
-| hotkeys.ahk | Easy way to generate MIDI messages with hotkeys | Needs cleanup |
-| hotkeys_alt.ahk | Alternative more complex way of generating MIDI messages | Needs cleanup |
+| midilab.ahk | This is the "application" file that starts midilab | Needs refactoring |
+| user\midi-in.ahk | Rules for transforming MIDI input to keypresses or any other output | Clean & WIP |
+| user\midi-out.ahk | Easy way to generate MIDI messages with hotkeys | Needs refactoring |
+| user | This folder contains all user rules, templates (coming) and examples (coming) | WIP |
+| resources | This folder contains images, icons and other assets | WIP |
+| core | This folder contains the core libraries | WIP |
 
 ## Rules
 
@@ -148,7 +160,10 @@ The most important vars are type, number and value. They contain different infor
 
 I want to refactor the code more and more to make things easier to read and write. The codebase is quite chaotic. Some variable names are hard to identify and there are other usability issues.
 
-- Complex rules that are easier to write
 - Cleaner and leaner code
-- Rename rules.ahk to midi-in.ahk
-- Rename hotkeys.ahk to midi-out.ahk
+- Updating the readme.md
+
+## Endnote
+
+
+If you are interested in contributing (this also goes out to the original creator of this project) please go ahead and create a commit, pull request or just ping me on github or by email. I'm happy to receive any support.
