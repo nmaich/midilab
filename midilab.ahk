@@ -1,5 +1,5 @@
 
-Menu, Tray, Icon, C:\Tools\AHK\Icons\Rocket.ico
+Menu, Tray, Icon, resources\midilab.ico
 #Persistent
 #SingleInstance , force         	                                                    ; Only run one instance
 #InstallKeybdHook
