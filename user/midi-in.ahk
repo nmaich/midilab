@@ -10,9 +10,8 @@ rules:
 
 ; Process cc messages
 
-if type = "cc"
+if type = cc
 {
-
 
 
   ;Only if Ableton Live 10 active
@@ -20,12 +19,11 @@ if type = "cc"
   if application = Ableton Live 10 Suite.exe
   {
 
-    SendKey(50, "Left", "Right")
+    SendKey(9, "Left", "Right")
 
-    SendKey(51, "Up", "Down")
+    SendKey(10, "Up", "Down")
 
   }
-
 
 
   ; Any Application except Live 10
@@ -33,93 +31,50 @@ if type = "cc"
   if application != Ableton Live 10 Suite.exe
   {
 
+    ;Upper Dials
 
+    ;CC1
 
-    ; Only when all modifier keys are off, process these commands
+    SendCode(1, "{Up}", "{Down}")
+    SendCode(1, "{Up}", "{Down}", "Ctrl", 4)
+    SendCode(1, "^+d{Up}!{Right}", "{Enter}", "Alt")
+    SendCode(1, "{Shift down}{Up}", "{Shift down}{Down}", "Shift")
 
-    if mode = "none"
+    SendCode(1, "^+{Up}", "^+{Down}", "Ctrl + Alt")
+    SendCode(1, "+{Up 4}", "+{Down 4}", "Ctrl + Shift")
+    SendCode(1, "^+d{Up}!{Right}", "^d", "Alt + Shift")
 
-    {
+    ;CC2
 
-      ; Complex rules for multi key codes
+    SendCode(2, "{Up}", "{Down}",, 2)
+    SendCode(2, "{Up}", "{Down}", "Ctrl", 16)
 
-      SendCode(22,"+{Left}","+{Right}")
+    SendCode(3, "^+{Up}", "^+{Down}")
 
-      SendCode(23,"+{Up}","+{Down}")
+    SendCode(4, "^+d{Up}!{Right}", "^d")
 
-      SendCode(26,"!{Up}", "{Enter}")
+    SendCode(5, "{Ctrl down}{Shift down}{Tab}{Shift up}", "{Ctrl down}{Tab}")
+    SendCode(5, "{Ctrl down}{Shift down}{Tab}{Shift up}", "{Ctrl down}{Tab}", "Ctrl")
 
-      SendCode(33, "{Left}", "{Right}")
+    ; Lower Dials
 
-      ; Simple rules for single key macros
+    ; CC9
 
-      SendCode(27, "^+d", "^d")
+    SendCode(9, "{Left}", "{Right}")
+    SendCode(9, "^{Left}", "^{Right}", "Ctrl")
+    SendCode(9, "{Backspace}", "{Delete}", "Alt")
+    SendCode(9, "{Shift down}{Left}", "{Shift down}{Right}", "Shift")
 
-      SendKey(24, "Up", "Down", 4)
+    SendCode(9, "^{Backspace}", "^{Delete}", "Ctrl + Alt")
+    SendCode(9, "^+{Left}", "^+{Right}", "Ctrl + Shift")
 
-      SendKey(25, "WheelUp", "WheelDown", 2)
+    SendCode(10, "^{Left}", "^{Right}")
+    SendCode(10, "!{Left}", "!{Right}", "Ctrl")
+    SendCode(10, "^{Backspace}", "^{Delete}", "Alt")
+    SendCode(10, "{Shift down}^{Left}", "{Shift down}^{Right}", "Shift")
 
-      SendKey(50, "Left", "Right")
-
-      SendKey(51, "Up", "Down")
-
-    }
-
-
-
-    ; Only when modifiers key Ctrl is on
-
-    if mode = "shift"
-    {
-
-      SendCode(50,"{Shift down}{Left}","{Shift down}{Right}")
-
-      SendCode(51,"{Shift down}{Up}","{Shift down}{Down}")
-
-    }
-
-
-
-    ; Only Ctrl active
-
-    if mode = "ctrl"
-    {
-
-      SendKey(50, "Left", "Right", 1, "Ctrl")
-
-      SendKey(51, "Up", "Down", 4)
-
-      SendCode(33, "^+{Left}", "^+{Right}")
-
-      SendCode(22, "{Ctrl down}{Shift down}{Tab}{Shift up}", "{Ctrl down}{Tab}")
-
-    }
-
-
-
-    ; Only Alt active
-
-    if mode = "alt"
-    {
-
-      SendCode(22, "{Alt down}{Shift down}{Tab}{Shift up}", "{Alt down}{Tab}")
-
-    }
-
-
-
-    ; Ctrl & Shift active
-
-    if mode = "ctrl + shift"
-    {
-
-      SendKey(50, "Left", "Right", 1, "Ctrl", "Shift")
-
-      SendCode(51, "+{Up 4}", "+{Down 4}")
-
-    }
-
-
+    SendCode(13, "{Alt down}{Shift down}{Tab}{Shift up}", "{Alt down}{Tab}")
+    SendCode(13, "{Alt down}{Shift down}{Tab}{Shift up}", "{Alt down}{Tab}", "Alt")
 
   } ; End application filter
 
@@ -129,7 +84,7 @@ if type = "cc"
 
 ; Process note-on messages
 
-if type = "noteon"
+if type = noteon
 {
   ; No rules set
 }
@@ -138,7 +93,7 @@ if type = "noteon"
 
 ; Process note-off messages
 
-if type = "noteoff"
+if type = noteoff
 {
   ; No rules active
 }
@@ -147,7 +102,7 @@ if type = "noteoff"
 
 ; Process program change
 
-if type = "pc"
+if type = pc
 {
   ; No rules active
 }

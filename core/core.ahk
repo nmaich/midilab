@@ -13,110 +13,35 @@
 
 MidiMsgDetect(hInput, midiMsg, wMsg) ; Midi input section in calls this function each time a midi message is received. Then the midi message is broken up into parts for manipulation.  See http://www.midi.org/techspecs/midimessages.php (decimal values).
 {
+
   global statusbyte, chan, note, cc, number, value, type, pitchb ; Make these vars gobal to be used in other functions
   ; ===============; Extract Variables by extracting from midi message
   statusbyte :=  midiMsg & 0xFF                ; Extract statusbyte = what type of midi message and what midi channel
   chan          := (statusbyte & 0x0f) + 1      ; WHAT MIDI CHANNEL IS THE MESSAGE ON? EXTRACT FROM STATUSBYTE
-  number         := (midiMsg >> 8) & 0xFF     ; THIS IS number VALUE = NOTE NUMBER OR CC NUMBER
+  number        := (midiMsg >> 8) & 0xFF     ; THIS IS number VALUE = NOTE NUMBER OR CC NUMBER
   value         := (midiMsg >> 16) & 0xFF   ; value VALUE IS NOTE VELEOCITY OR CC VALUE
   pitchb        := (value << 7) | number          ;(midiMsg >> 8) & 0x7F7F  masking to extract the pbs
   ; =============== assign type variable for display only ; ===============
   if statusbyte between 176 and 191   ; Is message a CC
-  type = "cc"                                        ; if so then set type to CC - only used with the midi monitor
+  type := "cc"                                        ; if so then set type to CC - only used with the midi monitor
   if statusbyte between 144 and 159   ; Is message a Note On
-  type = "noteon"                               ; Set gui var
+  type := "noteon"                               ; Set gui var
   if statusbyte between 128 and 143   ; Is message a Note Off?
-  type = "noteoff"                              ; set gui to NoteOff
+  type := "noteoff"                              ; set gui to NoteOff
   if statusbyte between 192 and 208   ;Program Change
-  type = "pc"
+  type := "pc"
   if statusbyte between 224 and 239   ; Is message a Pitch Bend
-  type = "pitchb"                                 ; Set gui to pb
+  type := "pitchb"                                 ; Set gui to pb
 
   MidiInDisplay(type, statusbyte, chan, number, value) ; ===============Show midi input on midi monitor display ; ===============
   gosub, rules                                                        ; =============== run rules label to organize
+
 } ; =============== ; end of MidiMsgDetect funciton
+
 Return
 
 
 global number, value
-
-
-SendKey(num, key1, key2, multi=1, mod1="none", mod2="none")
-{
-
-  IfEqual, number, %num%
-  {
-
-    if value between 120 and 127
-    {
-
-      datanew := (128-value)*multi
-
-      if (mod1 == "none")
-      SendInput {%key1% %datanew%}
-
-      if (mod1 <> "none" && mod2 == "none")
-      SendInput {%mod1% down}{%key1% %datanew%}{%mod1% up}
-
-      if (mod1 <> "none" && mod2 <> "none")
-      SendInput {%mod2% down}{%mod1% down}{%key1% %datanew%}
-
-
-    }
-
-    if value between 1 and 10
-    {
-
-      datanew := (value)*multi
-
-      if (mod1 == "none")
-      SendInput {%key2% %datanew%}
-
-      if (mod1 <> "none" && mod2 == "none")
-      SendInput {%mod1% down}{%key2% %datanew%}{%mod1% up}
-
-      if (mod1 <> "none" && mod2 <> "none")
-      SendInput {%mod2% down}{%mod1% down}{%key2% %datanew%}
-
-    }
-
-  }
-
-}
-
-return
-
-SendCode(num, keycode1, keycode2, multi=1)
-{
-
-  IfEqual, number, %num%
-  {
-
-    if value between 120 and 127
-    {
-
-      datanew := (128-value)*multi
-
-      Loop %datanew%
-      SendInput %keycode1%
-
-    }
-
-    if value between 1 and 10
-    {
-
-      datanew := (value)*multi
-
-      Loop %datanew%
-      SendInput %keycode2%
-
-    }
-
-  }
-
-}
-
-return
 
 
 SendCodeAlternative(num, keycode1, keycode2, multi=1, mod1="none", mod2="none")
@@ -190,6 +115,7 @@ return
 
 MidiInDisplay(type, statusbyte, chan, number, value)   ; update the midimonitor gui - see below
 {
+
   Gui, 14:default
   Gui, 14:ListView, In1                                             ; see the first listview midi in monitor
   LV_Add("",type,statusbyte,chan,number,value)  ; Setting up the columns for gui
@@ -202,7 +128,9 @@ MidiInDisplay(type, statusbyte, chan, number, value)   ; update the midimonitor 
   {
     LV_Delete(1)
   }
+
 }
+
 return
 
 ;*************************************************
@@ -211,6 +139,7 @@ return
 
 MidiOutDisplay(type, statusbyte, chan, number, value) ;  update the midimonitor gui
 {
+
   Gui, 14:default
   Gui, 14:ListView, Out1 ; see the second listview midi out monitor
   LV_Add("",type,statusbyte,chan,number,value)
@@ -219,11 +148,38 @@ MidiOutDisplay(type, statusbyte, chan, number, value) ;  update the midimonitor 
   LV_ModifyCol(3,"center")
   LV_ModifyCol(4,"center")
   LV_ModifyCol(5,"center")
+
   If (LV_GetCount() > 10)
   {
     LV_Delete(1)
   }
+
 }
+
+return
+
+KeyOutDisplay(number, key, multi, mode) ;  update the midimonitor gui
+{
+
+  keyout := RegExReplace(key, "[{}]", "")
+  mode := RegExReplace(mode, "none", "Key")
+
+  Gui, 14:default
+  Gui, 14:ListView, Out1 ; see the second listview midi out monitor
+  LV_Add("",number, keyout, multi, mode)
+  LV_ModifyCol(1,"center")
+  LV_ModifyCol(2,"center")
+  LV_ModifyCol(3,"center")
+  LV_ModifyCol(4,"center")
+  LV_ModifyCol(5,"center")
+
+  If (LV_GetCount() > 10)
+  {
+    LV_Delete(1)
+  }
+
+}
+
 return
 
 ;*************************************************
@@ -256,7 +212,9 @@ Return
 ;*************************************************
 
 ; =============== MIDI INPUT SELECTION ; ==============
+
 MidiSet:                                                                    ; midi port selection gui
+
 Gui, 6: Destroy
 Gui, 2: Destroy
 Gui, 3: Destroy
@@ -285,6 +243,7 @@ Return
 ; =============== gui done change stuff - see label in both gui listbox line ; ===============
 ;44444444444444444444444444 NEED TO EDIT THIS TO REFLECT CHANGES IN GENMCE PRIOR TO SEND OUT
 DoneInChange:                                   ; Run this when midi input port has changed
+
 gui +lastfound
 Gui, Submit, NoHide
 Gui, Flash
@@ -295,9 +254,11 @@ UDPort:= MidiInPort - 1, MidiInDevice:= UDPort ; probably a much better way do t
 GuiControl, 4:, UDPort, %MidiIndevice%
 WriteIni()
 ;MsgBox, 32, , midi in device = %MidiInDevice%`nmidiinport = %MidiInPort%`nport = %port%`ndevice= %device% `n UDPort = %UDport% ; ===============UNCOMMENT FOR TESTING IF NEEDED
+
 Return
 
 DoneOutChange:
+
 gui +lastfound
 Gui, Submit, NoHide
 Gui, Flash
@@ -308,24 +269,30 @@ UDPort2:= MidiOutPort - 1 , MidiOutDevice:= UDPort2
 GuiControl, 4: , UDPort2, %MidiOutdevice%
 WriteIni()
 ;Gui, Destroy
+
 Return
 
 Set_Done:                                                                    ; aka reload program, called from midi selection gui
+
 Gui, 3: Destroy
 Gui, 4: Destroy
 sleep, 100
 Reload
+
 Return
 
 Cancel:
+
 Gui, Destroy
 Gui, 2: Destroy
 Gui, 3: Destroy
 Gui, 4: Destroy
 Gui, 5: Destroy
+
 Return
 
 ResetAll:                                                                 ; program reset if needed by user
+
 MsgBox, 33, %version% - Reset All?, This will delete ALL settings`, and restart this program!
 IfMsgBox, OK
 {
@@ -333,9 +300,11 @@ IfMsgBox, OK
   Reload                                                            ; restart the app.
 }
 IfMsgBox, Cancel
+
 Return
 
 GuiClose:                                                               ; on x exit app
+
 Suspend, Permit                                                ; allow Exit to work Paused.
 MsgBox, 4, Exit %version%, Exit %version% %ver%? ;
 IfMsgBox No
@@ -350,6 +319,7 @@ Gui, 5: Destroy
 gui, 7: destroy
 Sleep 100
 ;winclose, Midi_in_2 ;close the midi in 2 ahk file
+
 ExitApp
 
 ;*************************************************

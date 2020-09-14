@@ -18,12 +18,12 @@ global change, number, type, mode
 
 if value between 1 and 10
 {
-  change = "positive"
+  change := "positive"
 }
 
 if value between 120 and 127
 {
-  change = "negative"
+  change := "negative"
 }
 
 
@@ -32,41 +32,133 @@ if value between 120 and 127
 
 if !getKeyState("Ctrl") and !getKeyState("Alt") and !getKeyState("Shift")
 {
-  mode = "none"
+  mode := "Default"
 }
 
 if (getKeyState("Shift") and !getKeyState("Ctrl") and !getKeyState("Alt"))
 {
-  mode = "shift"
+  mode := "Shift"
 }
 if !getKeyState("Shift") and getKeyState("Ctrl") and !getKeyState("Alt")
 {
-  mode = "ctrl"
+  mode := "Ctrl"
 }
 
 if !getKeyState("Shift") and getKeyState("Ctrl") and getKeyState("Alt")
 {
-  mode = "ctrl + alt"
+  mode := "Ctrl + Alt"
 }
 
 if getKeyState("Shift") and getKeyState("Ctrl") and !getKeyState("Alt")
 {
-  mode = "ctrl + shift"
+  mode := "Ctrl + Shift"
 }
 
 if !getKeyState("Shift") and !getKeyState("Ctrl") and getKeyState("Alt")
 {
-  mode = "alt"
+  mode := "Alt"
 }
 
 if getKeyState("Shift") and !getKeyState("Ctrl") and getKeyState("Alt")
 {
-  mode = "alt + shift"
+  mode := "Alt + Shift"
 }
 
 if getKeyState("Shift") and getKeyState("Ctrl") and getKeyState("Alt")
 {
-  mode = "ctrl + alt + shift"
+  mode := "Ctrl + Alt + Shift"
 }
 
 
+SendKey(num, key1, key2, currentmode="Default", multi=1, mod1="none", mod2="none")
+{
+
+  if (mode == currentmode)
+  {
+
+    IfEqual, number, %num%
+    {
+
+      if value between 120 and 127
+      {
+
+        datanew := (128-value)*multi
+
+        if (mod1 == "none")
+        SendInput {%key1% %datanew%}
+
+        if (mod1 <> "none" && mod2 == "none")
+        SendInput {%mod1% down}{%key1% %datanew%}{%mod1% up}
+
+        if (mod1 <> "none" && mod2 <> "none")
+        SendInput {%mod2% down}{%mod1% down}{%key1% %datanew%}
+
+
+      }
+
+      if value between 1 and 10
+      {
+
+        datanew := (value)*multi
+
+        if (mod1 == "none")
+        SendInput {%key2% %datanew%}
+
+        if (mod1 <> "none" && mod2 == "none")
+        SendInput {%mod1% down}{%key2% %datanew%}{%mod1% up}
+
+        if (mod1 <> "none" && mod2 <> "none")
+        SendInput {%mod2% down}{%mod1% down}{%key2% %datanew%}
+
+      }
+
+    }
+
+  }
+
+}
+
+
+
+SendCode(num, keycode1, keycode2, currentmode="Default", multi=1)
+{
+
+  ;MsgBox %currentmode% %mode%
+
+  if (mode == currentmode)
+  {
+
+    ;Msgbox %mode%
+
+    IfEqual, number, %num%
+    {
+
+      if value between 120 and 127
+      {
+
+        datanew := (128-value)*multi
+
+        Loop %datanew%
+        SendInput %keycode1%
+
+        KeyOutDisplay(number, keycode1, multi, mode)
+
+      }
+
+      if value between 1 and 10
+      {
+
+        datanew := (value)*multi
+
+        Loop %datanew%
+        SendInput %keycode2%
+
+        KeyOutDisplay(number, keycode2, multi, mode)
+
+      }
+
+    }
+
+  }
+
+}
