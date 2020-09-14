@@ -23,7 +23,7 @@ gosub, MidiPortRefresh                  ; used to refresh the input and output p
 port_test(numports,numports2)   ; test the ports - check for valid ports? - see Midi_In_Out_Lib.ahk file
 gosub, midiin_go                            ; opens the midi input port listening routine see Midi_In_Out_Lib.ahk file
 gosub, midiout                               ; opens the midi out port see Midi_In_Out_Lib.ahk file
-; gosub, midiMon                             ; see below - a monitor gui - see Midi_In_Out_Lib.ahk file  COMMENT THIS OUT IF YOU DON'T WANT DISPLAY
+;gosub, midiMon                             ; see below - a monitor gui - see Midi_In_Out_Lib.ahk file  COMMENT THIS OUT IF YOU DON'T WANT DISPLAY
 gosub, dev
 
 ;*************************************************
@@ -31,7 +31,8 @@ gosub, dev
 ;*************************************************
 
 ; =============== varibles below are for keyboard cc
-channel = 1        ; default channel =1
+
+Channel = 1        ; default channel =1
 CC_num = 7         ; CC
 CCIntVal = 0       ; Default zero for  CC  (data byte 2)
 CCIntDelta = 1     ; Amount to change CC (data byte 2)
@@ -82,7 +83,8 @@ MidiOutDisplay(type, statusbyte, chan , CC_num, value)                      ; up
 midiOutShortMsg(h_midiout, (Channel+175), CC_num, CCIntVal)   ; SEND OUT THE MESSAGE > function located in Midi_In_Out_Lib.ahk;MsgBox, 0, ,sendcc triggered , 1 ; for testing purposes only
 Return
 
-SendCC: ; ===============use this for converting keypress into midi message
+SendCC:
+;MsgBox %Channel% ; ===============use this for converting keypress into midi message
 midiOutShortMsg(h_midiout, (Channel+175), CC_num, CCIntVal) ; SEND OUT THE MESSAGE > function located in Midi_In_Out_Lib.ahk
 ; =============== set vars for display only ;  get these to be the same vars as midi send messages
 type := "CC"
@@ -131,6 +133,7 @@ Return
 #Include core/core.ahk       ; this file replaced the midi in out lib below - for now
 #Include core/develop.ahk
 #Include user/midi-in.ahk              ; this file contains: Rules for manipulating midi input then sending modified midi output.
+#Include user/midi-out.ahk              ; this file contains: Rules for manipulating midi input then sending modified midi output.
 
 ;#Include hotkeys.ahk         ; this file contains: examples of HOTKEY generated midi messages to be output - the easy way!
 ;#Include hotkeys_alt.ahk         ; this file contains: examples of HOTKEY generated midi messages to be output - the BEST way!

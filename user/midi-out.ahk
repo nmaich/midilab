@@ -21,6 +21,10 @@
 
 ; =============== Example 1  - 2 key definitions ; ===============
 
+; Global Channel
+
+Channel = 1
+
 f7::																		; hotkey subtracting CC  (data byte 2) value.
 Loop																	; loop to detect the state of the hotkey, held down.
 {
