@@ -42,8 +42,11 @@ if application != Ableton Live 10 Suite.exe
 
   ; CC5
 
-  SendCode(5, "{Ctrl down}{Shift down}{Tab}{Shift up}", "{Ctrl down}{Tab}")
+  SendCode(5, "{Up}", "{Down}")
+  SendCode(6, "!{Up}", "{Enter}")
   SendCode(5, "{Ctrl down}{Shift down}{Tab}{Shift up}", "{Ctrl down}{Tab}", "Ctrl")
+  SendCode(13, "{Left}", "{Right}")
+  SendCode(13, "{Alt down}{Shift down}{Tab}{Shift up}", "{Alt down}{Tab}", "Alt")
 
   ; Lower Dials 9 - 16
 
@@ -65,7 +68,5 @@ if application != Ableton Live 10 Suite.exe
 
   ; CC13
 
-  SendCode(13, "{Alt down}{Shift down}{Tab}{Shift up}", "{Alt down}{Tab}")
-  SendCode(13, "{Alt down}{Shift down}{Tab}{Shift up}", "{Alt down}{Tab}", "Alt")
 
 } ; End application filter

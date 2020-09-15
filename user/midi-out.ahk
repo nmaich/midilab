@@ -1,5 +1,17 @@
-; Last edited 12/19/2018 11:01 AM by genmce
 /*
+
+@floegerer
+
+Needs urgent refactoring
+
+- Create functions to send cc, pc, notes
+- Create functions to set sendmode, relative, absolute
+- Move or clean up Subroutines
+- Split up core file with more includes to make this readable
+
+
+@genmce
+
   Method 1 for generating CC's from keystroke.
 
   While this method is easy to use, and reproduce more controls with,
@@ -15,22 +27,17 @@
 
 */
 
-;*************************************************
-;* 		HOTKEY TO MIDI CC GENERATION
-;*************************************************
-
-; =============== Example 1  - 2 key definitions ; ===============
-
-; Global Channel
-
-Channel = 1
+Channel = 1        ; default channel =1
+CC_num = 7         ; CC
+CCIntVal = 0       ; Default zero for  CC  (data byte 2)
+CCIntDelta = 1     ; Amount to change CC (data byte 2)
 
 f7::																		; hotkey subtracting CC  (data byte 2) value.
 Loop																	; loop to detect the state of the hotkey, held down.
 {
   if !GetKeyState("f7","P") 								; if key is not down, or, if key is released
     break															; break out of the loop and do nothing else.
-    CC_num = 7 													; What CC (data number) do you wish to send? EDIT THIS TO CHANGE CC_num
+    CC_num = 1 													; What CC (data number) do you wish to send? EDIT THIS TO CHANGE CC_num
     CCIntVal := CCIntVal > 0 ? CCIntVal-1 : 0  	;Subtract 1 from byte 2 until min value of 0 is reached. * LEAVE THIS ALONE
     gosub, SendCC 												; LABEL LOCATED IN GEN_MIDI_APP  LINE 111
   ;sleep, 20       												   ; adjust this for speed 20ms is fast - NOT SURE WHAT HAPPENS WHEN THIS IS FASTER?

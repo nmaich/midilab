@@ -1,124 +1,65 @@
-;*************************************************
-;*      MIDI INPUT DETECTION
-;              PARSE FUNCTION
-;*************************************************
 
 
-/*
-  Midi messages are made up of several sections
-  Statusbyte, midi channel, number, value - they are all combined into one midi message
-  https://www.nyu.edu/classes/bello/FMT_files/9_MIDI_code.pdf
-*/
+
+; Include other core files
+
+#Include core/gui.ahk
+#Include core/routines.ahk
+#Include core/config.ahk
+#Include core/ports.ahk
+#Include core/send.ahk
 
 
-MidiMsgDetect(hInput, midiMsg, wMsg) ; Midi input section in calls this function each time a midi message is received. Then the midi message is broken up into parts for manipulation.  See http://www.midi.org/techspecs/midimessages.php (decimal values).
+
+
+; Make these vars gobal to be used in other functions
+
+global statusbyte, chan, note, cc, number, value, type, pitchb
+
+
+
+
+; Midi input section in calls this function each time a midi message is received. Then the midi message is broken up into parts for manipulation. See http://www.midi.org/techspecs/midimessages.php (decimal values).
+
+MidiMsgDetect(hInput, midiMsg, wMsg)
 {
+  ; Extract Variables by extracting from midi message
 
-  global statusbyte, chan, note, cc, number, value, type, pitchb ; Make these vars gobal to be used in other functions
-  ; ===============; Extract Variables by extracting from midi message
-  statusbyte :=  midiMsg & 0xFF                ; Extract statusbyte = what type of midi message and what midi channel
-  chan          := (statusbyte & 0x0f) + 1      ; WHAT MIDI CHANNEL IS THE MESSAGE ON? EXTRACT FROM STATUSBYTE
-  number        := (midiMsg >> 8) & 0xFF     ; THIS IS number VALUE = NOTE NUMBER OR CC NUMBER
-  value         := (midiMsg >> 16) & 0xFF   ; value VALUE IS NOTE VELEOCITY OR CC VALUE
-  pitchb        := (value << 7) | number          ;(midiMsg >> 8) & 0x7F7F  masking to extract the pbs
-  ; =============== assign type variable for display only ; ===============
-  if statusbyte between 176 and 191   ; Is message a CC
-  type := "cc"                                        ; if so then set type to CC - only used with the midi monitor
-  if statusbyte between 144 and 159   ; Is message a Note On
-  type := "noteon"                               ; Set gui var
-  if statusbyte between 128 and 143   ; Is message a Note Off?
-  type := "noteoff"                              ; set gui to NoteOff
-  if statusbyte between 192 and 208   ;Program Change
+  statusbyte := midiMsg & 0xFF ; Extract statusbyte = what type of midi message and what midi channel
+  chan := (statusbyte & 0x0f) + 1 ; WHAT MIDI CHANNEL IS THE MESSAGE ON? EXTRACT FROM STATUSBYTE
+  number := (midiMsg >> 8) & 0xFF ; THIS IS number VALUE = NOTE NUMBER OR CC NUMBER
+  value := (midiMsg >> 16) & 0xFF ; value VALUE IS NOTE VELEOCITY OR CC VALUE
+  pitchb := (value << 7) | number ; (midiMsg >> 8) & 0x7F7F masking to extract the pbs
+
+  ; Assign type variable for display only
+
+  if statusbyte between 176 and 191 ; Is message a CC
+  type := "cc" ; if so then set type to CC - only used with the midi monitor
+  if statusbyte between 144 and 159 ; Is message a Note On
+  type := "noteon" ; Set gui var
+  if statusbyte between 128 and 143 ; Is message a Note Off?
+  type := "noteoff" ; set gui to NoteOff
+  if statusbyte between 192 and 208 ;Program Change
   type := "pc"
-  if statusbyte between 224 and 239   ; Is message a Pitch Bend
-  type := "pitchb"                                 ; Set gui to pb
+  if statusbyte between 224 and 239 ; Is message a Pitch Bend
+  type := "pitchb" ; Set gui to pb
 
-  MidiInDisplay(type, statusbyte, chan, number, value) ; ===============Show midi input on midi monitor display ; ===============
-  gosub, rules                                                        ; =============== run rules label to organize
-
-} ; =============== ; end of MidiMsgDetect funciton
-
-Return
-
-
-global number, value
-
-
-SendCodeAlternative(num, keycode1, keycode2, multi=1, mod1="none", mod2="none")
-{
-
-  IfEqual, number, %num%
-  {
-
-    if value between 120 and 127
-    {
-
-      datanew := (128-value)*multi
-
-      if (mod1 == "none")
-      {
-        Loop %datanew%
-        SendInput %keycode1%
-      }
-
-      ;MsgBox "%mod1%"
-
-      if (mod1 == "Ctrl") && (getKeyState("Ctrl"))
-      {
-        Loop %datanew%
-        SendInput %keycode1%
-      }
-
-      if (mod1 == "Alt") && (getKeyState("Alt"))
-      {
-        Loop %datanew%
-        SendInput %keycode1%
-      }
-
-
-    }
-
-    if value between 1 and 10
-    {
-
-      datanew := (value)*multi
-
-      if (mod1 == "none")
-      {
-        Loop %datanew%
-        SendInput %keycode2%
-      }
-
-      if (mod1 == "Ctrl") && (getKeyState("Ctrl"))
-      {
-        Loop %datanew%
-        SendInput %keycode2%
-      }
-
-      if (mod1 == "Alt") && (getKeyState("Alt"))
-      {
-        Loop %datanew%
-        SendInput %keycode2%
-      }
-
-    }
-
-  }
+  MidiInDisplay(type, statusbyte, chan, number, value) ; Show midi input on midi monitor display
+  gosub, rules ; run rules label to organize
 
 }
 
-return
 
-;*************************************************
-;*    SHOW MIDI INPUT ON GUI MONITOR
-;*************************************************
 
-MidiInDisplay(type, statusbyte, chan, number, value)   ; update the midimonitor gui - see below
+
+; Show midi input on gui monitor
+
+MidiInDisplay(type, statusbyte, chan, number, value)
 {
 
   Gui, 14:default
-  Gui, 14:ListView, In1                                             ; see the first listview midi in monitor
-  LV_Add("",type,statusbyte,chan,number,value)  ; Setting up the columns for gui
+  Gui, 14:ListView, In1 ; see the first listview midi in monitor
+  LV_Add("",type,statusbyte,chan,number,value) ; Setting up the columns for gui
   LV_ModifyCol(1,"center")
   LV_ModifyCol(2,"center")
   LV_ModifyCol(3,"center")
@@ -131,13 +72,12 @@ MidiInDisplay(type, statusbyte, chan, number, value)   ; update the midimonitor 
 
 }
 
-return
 
-;*************************************************
-;*    SHOW MIDI OUTPUT ON GUI MONITOR
-;*************************************************
 
-MidiOutDisplay(type, statusbyte, chan, number, value) ;  update the midimonitor gui
+
+; Show midi output on gui monitor
+
+MidiOutDisplay(type, statusbyte, chan, number, value)
 {
 
   Gui, 14:default
@@ -156,9 +96,12 @@ MidiOutDisplay(type, statusbyte, chan, number, value) ;  update the midimonitor 
 
 }
 
-return
 
-KeyOutDisplay(number, key, multi, mode) ;  update the midimonitor gui
+
+
+; Show key output
+
+KeyOutDisplay(number, key, multi, mode) ; update the MidiMonitoritor gui
 {
 
   keyout := RegExReplace(key, "[{}]", "")
@@ -180,555 +123,280 @@ KeyOutDisplay(number, key, multi, mode) ;  update the midimonitor gui
 
 }
 
-return
 
-;*************************************************
-;*      MIDI MONITOR GUI CODE - creates the monitor window
-;*************************************************
 
-midiMon: ; midi monitor gui with listviews
 
-posx := A_ScreenWidth - 480
-posy := A_ScreenHeight - 380
-; MsgBox %posx%
+; Returns a "|"-separated list of midi output devices
 
-Gui, 14: destroy
-Gui, 14: default
-Gui, 14: add, text, x80 y5, MIDI Input ; %TheChoice%
-Gui, 14: Add, DropDownList, x40 y20 w140 Choose%TheChoice% vMidiInPort gDoneInChange altsubmit -tabstop, %MiList%  ; (
-Gui, 14: add, text, x305 y5, MIDI Ouput ; %TheChoice2%
-Gui, 14: Add, DropDownList, x270 y20 w140  Choose%TheChoice2% vMidiOutPort gDoneOutChange altsubmit -tabstop, %MoList%
-Gui, 14: Add, ListView, x5 r11 w220 Backgroundblack caqua Count10 vIn1 -tabstop,  type|status|channel|number|value|
-Gui, 14: Add, ListView, x+5 r11 w220 Backgroundblack cyellow Count10 vOut1 -tabstop,  type|status|channel|number|value|
-Gui, 14: +AlwaysOnTop
-Gui, 14: add, Button, x5 w220 gSet_Done, Save && Reload
-Gui, 14: add, Button, xp+225 w220 gCancel, Cancel
-Gui, 14: show, autosize x%posx% y%posy%, IO Monitor
-
-Return
-
-;*************************************************
-;*              MIDI SET GUI  - midi setup
-;*************************************************
-
-; =============== MIDI INPUT SELECTION ; ==============
-
-MidiSet:                                                                    ; midi port selection gui
-
-Gui, 6: Destroy
-Gui, 2: Destroy
-Gui, 3: Destroy
-Gui, 4: Destroy
-Gui, 4: +LastFound +AlwaysOnTop   +Caption +ToolWindow        ;-SysMenu
-Gui, 4: Font, s12
-Gui, 4: add, text, x10 y10 w300 cmaroon, Select Midi Ports.       ; Text title
-Gui, 4: Font, s8
-Gui, 4: Add, Text, x10 y+10 w175 Center , Midi In Port                 ;Just text label
-Gui, 4: font, s8
-; =============== MIDI INPUT SELECTION ; ===============
-Gui, 4: Add, ListBox, x10 w200 h100  Choose%TheChoice% vMidiInPort gDoneInChange AltSubmit, %MiList% ; --- midi in listing of ports
-;Gui,  Add, DropDownList, x10 w200 h120 Choose%TheChoice% vMidiInPort gDoneInChange altsubmit, %MiList%  ; ( you may prefer this style, may need tweak)
-
-; =============== MIDI OUTPUT SELECTION ; ===============
-Gui, 4: Add, TEXT,  x220 y40 w175 Center, Midi Out Port               ; gDoneOutChange
-; midi outlist box
-Gui, 4: Add, ListBox, x220 y62 w200 h100 Choose%TheChoice2% vMidiOutPort gDoneOutChange AltSubmit, %MoList% ; --- midi out listing
-;Gui,  Add, DropDownList, x220 y97 w200 h120 Choose%TheChoice2% vMidiOutPort gDoneOutChange altsubmit , %MoList%
-Gui, 4: add, Button, x10 w205 gSet_Done, Done - Reload script.
-Gui, 4: add, Button, xp+205 w205 gCancel, Cancel
-Gui, 4: show , , %version% Midi Port Selection                                ; main window title and command to show it.
-
-Return
-
-; =============== gui done change stuff - see label in both gui listbox line ; ===============
-;44444444444444444444444444 NEED TO EDIT THIS TO REFLECT CHANGES IN GENMCE PRIOR TO SEND OUT
-DoneInChange:                                   ; Run this when midi input port has changed
-
-gui +lastfound
-Gui, Submit, NoHide
-Gui, Flash
-Gui, 4: Submit, NoHide
-Gui, 4: Flash
-If %MidiInPort%
-UDPort:= MidiInPort - 1, MidiInDevice:= UDPort ; probably a much better way do this, I took this from JimF's qwmidi without out editing much.... it does work same with doneoutchange below.
-GuiControl, 4:, UDPort, %MidiIndevice%
-WriteIni()
-;MsgBox, 32, , midi in device = %MidiInDevice%`nmidiinport = %MidiInPort%`nport = %port%`ndevice= %device% `n UDPort = %UDport% ; ===============UNCOMMENT FOR TESTING IF NEEDED
-
-Return
-
-DoneOutChange:
-
-gui +lastfound
-Gui, Submit, NoHide
-Gui, Flash
-Gui, 4: Submit, NoHide
-Gui, 4: Flash
-If %MidiOutPort%
-UDPort2:= MidiOutPort - 1 , MidiOutDevice:= UDPort2
-GuiControl, 4: , UDPort2, %MidiOutdevice%
-WriteIni()
-;Gui, Destroy
-
-Return
-
-Set_Done:                                                                    ; aka reload program, called from midi selection gui
-
-Gui, 3: Destroy
-Gui, 4: Destroy
-sleep, 100
-Reload
-
-Return
-
-Cancel:
-
-Gui, Destroy
-Gui, 2: Destroy
-Gui, 3: Destroy
-Gui, 4: Destroy
-Gui, 5: Destroy
-
-Return
-
-ResetAll:                                                                 ; program reset if needed by user
-
-MsgBox, 33, %version% - Reset All?, This will delete ALL settings`, and restart this program!
-IfMsgBox, OK
+MidiOutsList(ByRef NumPorts)
 {
-  FileDelete, core/%version%.ini                             ; delete the ini file to reset ports, probably a better way to do this ...
-  Reload                                                            ; restart the app.
-}
-IfMsgBox, Cancel
 
-Return
-
-GuiClose:                                                               ; on x exit app
-
-Suspend, Permit                                                ; allow Exit to work Paused.
-MsgBox, 4, Exit %version%, Exit %version% %ver%? ;
-IfMsgBox No
-Return
-Else IfMsgBox Yes
-midiOutClose(h_midiout)
-Gui, 6: Destroy
-Gui, 2: Destroy
-Gui, 3: Destroy
-Gui, 4: Destroy
-Gui, 5: Destroy
-gui, 7: destroy
-Sleep 100
-;winclose, Midi_in_2 ;close the midi in 2 ahk file
-
-ExitApp
-
-;*************************************************
-;*          GET PORTS LIST AND PARSE
-;*************************************************
-
-MidiPortRefresh:                                    ; get the list of ports
-
-MIlist := MidiInsList(NumPorts)        ; Get midi inputs list
-Loop Parse, MIlist, |
-{
-}
-TheChoice := MidiInDevice + 1
-
-MOlist := MidiOutsList(NumPorts2)   ; Get midi outputs list
-Loop Parse, MOlist, |
-{
-}
-TheChoice2 := MidiOutDevice + 1
-
-return
-
-;*************************************************
-;*          CHECK .INI file for previous configuration
-;*************************************************
-;-----------------------------------------------------------------
-
-ReadIni()                                         ; Read .ini file to load port settings - also set up the tray Menu
-{
-  Menu, tray, NoStandard
-  ;Menu, tray, add
-  menu, tray, add, MidiMon        ; Menu item for the midi monitor
-  Menu, tray, add, MidiSet           ; set midi ports tray item
-  Menu, tray, add, ResetAll          ; DELETE THE .INI FILE - a new config needs to be set up
-
-  ;Reset configuration, :
-  ;IO Monitor,
-
-  menu, tray, Rename, MidiSet, Open MIDI port selection
-  menu, tray, Rename, ResetAll, Reset port selection
-  menu, tray, Rename, MidiMon, Show IO Monitor (Ctrl+Alt+M)
-  global MidiInDevice, MidiOutDevice, version ; version var is set at the beginning.
-  IfExist, core/%version%.ini
-  {
-    IniRead, MidiInDevice, core/%version%.ini, Settings, MidiInDevice , %MidiInDevice%            ; read the midi In port from ini file
-    IniRead, MidiOutDevice, core/%version%.ini, Settings, MidiOutDevice , %MidiOutDevice%   ; read the midi out port from ini file
-  }
-  Else                                                                                    ; no ini exists and this is either the first run or reset settings.
-  {
-    MsgBox, 1, No ini file found, Select midi ports?      ; Prompt user to select midi ports
-    IfMsgBox, Cancel
-    ExitApp
-    IfMsgBox, yes
-    gosub, midiset     ; run the midi setup routine
-  }
-} ; endof readini
-
-;*************************************************
-;*   WRITE TO INI FILE FUNCTION  + UPDATE INI WHENEVER SAVED PARAMETERS CHANGE
-;*************************************************
-
-WriteIni()                                                                  ; Write selections to .ini file
-{
-  global MidiInDevice, MidiOutDevice, version
-  IfNotExist, core/%version%.ini                                   ; if no .ini
-  FileAppend,, core/%version%.ini                              ; make  .ini with the following entries.
-  IniWrite, %MidiInDevice%, core/%version%.ini, Settings, MidiInDevice
-  IniWrite, %MidiOutDevice%, core/%version%.ini, Settings, MidiOutDevice
-}
-
-;*************************************************
-;*                 PORT TESTING
-;*************************************************
-
-port_test(numports,numports2)                             ; confirm selected ports exist ; CLEAN THIS UP STILL
-{
-  global midiInDevice, midiOutDevice, midiok    ; Set varibles to golobal
-
-  ;; =============== In port selection test based on numports ; ===============
-  If MidiInDevice not Between 0 and %numports%
-  {
-    MidiIn := 0 ; this var is just to show if there is an error - set if the ports are valid = 1, invalid = 0
-    ;MsgBox, 0, , midi in port Error ; (this is left only for testing)
-    If (MidiInDevice = "")                                      ; if there is no midi in device
-  MidiInerr = Midi In Port EMPTY.                ; set this var = error message
-  ;MsgBox, 0, , midi in port EMPTY
-  If (midiInDevice > %numports%)                  ; if greater than the number of ports on the system.
-  MidiInnerr = Midi In Port Invalid.              ; set this error message
-  ;MsgBox, 0, , midi in port out of range
-}
-Else
-{
-  MidiIn := 1                                                     ; setting var to non-error state or valid
-}
-; =============== out port selection test based on numports2 ; ===============
-If  MidiOutDevice not Between 0 and %numports2%
-{
-  MidiOut := 0                                                    ; set var to 0 as Error state.
-  If (MidiOutDevice = "")                                  ; if blank
-MidiOuterr = Midi Out Port EMPTY.         ; set this error message
-;MsgBox, 0, , midi o port EMPTY - THIS LINE IS JUST FOR TESTING
-If (midiOutDevice > %numports2%)             ; if greater than number of availble ports
-MidiOuterr = Midi Out Port Out Invalid.  ; set this error message
-;MsgBox, 0, , midi out port out of range - THIS LINE IS JUST FOR TESTING
-}
-Else
-{
-  MidiOut := 1                                                    ; set var to 1 as valid state.
-}
-; =============== test to see if ports valid, if either invalid load the gui to select ; ===============
-;midicheck(MCUin,MCUout)
-If (%MidiIn% = 0) Or (%MidiOut% = 0)
-{
-  MsgBox, 49, Midi Port Error!,%MidiInerr%`n%MidiOuterr%`n`nLaunch Midi Port Selection!
-  IfMsgBox, Cancel
-  ExitApp
-  midiok = 0                                                      ; Not sure if this is really needed now....
-  Gosub, MidiSet                                               ;Gui, show Midi Port Selection
-}
-Else
-{
-  midiok = 1
-  Return                                                              ; DO NOTHING - PERHAPS DO THE NOT TEST INSTEAD ABOVE.
-}
-}
-Return
-; =============== end of port testing ; ===============
-
-;*************************************************
-;*          MIDI OUTPUT - UNDER THE HOOD
-;*************************************************
-
-; =============== Midi output detection ; ===============
-MidiOut:                                                                 ; label to load new settings from midi out menu item
-OpenCloseMidiAPI()
-h_midiout := midiOutOpen(MidiOutDevice)   ; OUTPUT PORT 1 SEE BELOW FOR PORT 2
-return
-
-
-MidiOutsList(ByRef NumPorts)                        ; works with unicode now
-{ ; Returns a "|"-separated list of midi output devices
   local List, MidiOutCaps, PortName, result, midisize
   (A_IsUnicode)? offsetWordStr := 64: offsetWordStr := 32
   midisize := offsetWordStr + 18
   VarSetCapacity(MidiOutCaps, midisize, 0)
-  VarSetCapacity(PortName, offsetWordStr)                             ; PortNameSize 32
+  VarSetCapacity(PortName, offsetWordStr) ; PortNameSize 32
 
-  NumPorts := DllCall("winmm.dll\midiOutGetNumDevs")   ; midi output devices on system, First device ID = 0
+  ; Midi output devices on system, First device ID 0
+
+  NumPorts := DllCall("winmm.dll\midiOutGetNumDevs")
 
   Loop %NumPorts%
   {
     result := DllCall("winmm.dll\midiOutGetDevCaps", "Uint",A_Index - 1, "Ptr",&MidiOutCaps, "Uint",midisize)
 
-    If (result) {
+    If (result)
+    {
       List .= "|-Error-"
       Continue
     }
+
     PortName := StrGet(&MidiOutCaps + 8, offsetWordStr)
     List .= "|" PortName
   }
+
   Return SubStr(List,2)
 }
 
-; ===============-midiOut from TomB and Lazslo and JimF --------------------------------
-;THATS THE END OF MY STUFF (JimF) THE REST ID WHAT LASZLo AND PAXOPHONE WERE USING ALREADY
-;AHK FUNCTIONS FOR MIDI OUTPUT - calling winmm.dll
-;http://msdn.microsoft.com/library/default.asp?url=/library/en-us/multimed/htm/_win32_multimedia_functions.asp
-;Derived from Midi.ahk dated 29 August 2008 - streaming support removed - (JimF)
 
-OpenCloseMidiAPI() {  ; at the beginning to load, at the end to unload winmm.dll
+
+
+; At the beginning to load, at the end to unload winmm.dll
+
+OpenCloseMidiAPI()
+{
   static hModule
   If hModule
   DllCall("FreeLibrary", UInt,hModule), hModule := ""
-  If (0 = hModule := DllCall("LoadLibrary",Str,"winmm.dll")) {
+
+  If (0 = hModule := DllCall("LoadLibrary",Str,"winmm.dll"))
+  {
     MsgBox Cannot load libray winmm.dll
     Exit
-}
+  }
+
 }
 
-; ===============FUNCTIONS FOR SENDING SHORT MESSAGES ; ===============
 
-midiOutOpen(uDeviceID = 0) { ; Open midi port for sending individual midi messages --> handle
+
+
+; Functions for sending short messages
+
+midiOutOpen(uDeviceID = 0)
+{
+  ; Open midi port for sending individual midi messages --> handle
+
   strh_midiout = 0000
-
   result := DllCall("winmm.dll\midiOutOpen", UInt,&strh_midiout, UInt,uDeviceID, UInt,0, UInt,0, UInt,0, UInt)
-  If (result or ErrorLevel) {
+
+  If (result or ErrorLevel)
+  {
     MsgBox There was an Error opening the midi port.`nError code %result%`nErrorLevel = %ErrorLevel%
     Return -1
   }
+
   Return UInt@(&strh_midiout)
 }
-;*****************************************************************
-;   ALL MIDI SENT TO THE OUTPUT MIDI PORT - CALLS THIS FUNCTION
-;*****************************************************************
 
-midiOutShortMsg(h_midiout, MidiStatus,  Param1, Param2) { ;Channel,
-  ;h_midiout: handle to midi output device returned by midiOutOpen
-  ;EventType, Channel combined -> MidiStatus byte: http://www.harmony-central.com/MIDI/Doc/table1.html
-  ;Param3 should be 0 for PChange, ChanAT, or Wheel
-  ;Wheel events: entire Wheel value in Param2 - the function splits it into two bytes
-  /*
-    If (EventType = "NoteOn" OR EventType = "N1")
-        MidiStatus := 143 + Channel
-    Else If (EventType = "NoteOff" OR EventType = "N0")
-        MidiStatus := 127 + Channel
-    Else If (EventType = "CC")
-        MidiStatus := 175 + Channel
-    Else If (EventType = "PolyAT"  OR EventType = "PA")
-        MidiStatus := 159 + Channel
-    Else If (EventType = "ChanAT"  OR EventType = "AT")
-        MidiStatus := 207 + Channel
-    Else If (EventType = "PChange" OR EventType = "PC")
-        MidiStatus := 191 + Channel
-    Else If (EventType = "Wheel"   OR EventType = "W") {
-        MidiStatus := 223 + Channel
-        Param2 := Param1 >> 8      ; MSB of wheel value
-        Param1 := Param1 & 0x00FF  ; strip MSB
-      }
-*/
+
+
+
+; All midi sent to the output midi port - calls this function
+
+midiOutShortMsg(h_midiout, MidiStatus, Param1, Param2)
+{
+
   result := DllCall("winmm.dll\midiOutShortMsg", UInt,h_midiout, UInt, MidiStatus|(Param1<<8)|(Param2<<16), UInt)
-  If (result or ErrorLevel)  {
+
+  If (result or ErrorLevel)
+  {
     MsgBox There was an Error Sending the midi event: (%result%`, %ErrorLevel%)
     Return -1
   }
-}     ; ends midi out function
 
-midiOutClose(h_midiout) {  ; Close MidiOutput
-  Loop 9 {
+}
+
+
+
+; Close MidiOutput
+
+midiOutClose(h_midiout)
+{
+
+  Loop 9
+  {
     result := DllCall("winmm.dll\midiOutClose", UInt,h_midiout)
     If !(result or ErrorLevel)
     Return
     Sleep 250
   }
+
   MsgBox Error in closing the midi output port. There may still be midi events being Processed.
   Return -1
+
 }
 
-;UTILITY FUNCTIONS
-MidiOutGetNumDevs() { ; Get number of midi output devices on system, first device has an ID of 0
+
+
+
+; Get number of midi output devices on system, first device has an ID of 0
+
+MidiOutGetNumDevs()
+{
   Return DllCall("winmm.dll\midiOutGetNumDevs")
 }
 
-MidiOutNameGet(uDeviceID = 0) { ; Get name of a midiOut device for a given ID
 
-  ;MIDIOUTCAPS struct
-  ;    WORD      wMid;
-  ;    WORD      wPid;
-  ;    MMVERSION vDriverVersion;
-  ;    CHAR      szPname[MAXPNAMELEN];
-  ;    WORD      wTechnology;
-  ;    WORD      wVoices;
-  ;    WORD      wNotes;
-  ;    WORD      wChannelMask;
-  ;    DWORD     dwSupport;
 
-  VarSetCapacity(MidiOutCaps, 50, 0)  ; allows for szPname to be 32 bytes
+
+; Get name of a midiOut device for a given ID
+
+MidiOutNameGet(uDeviceID = 0)
+{
+
+  VarSetCapacity(MidiOutCaps, 50, 0) ; allows for szPname to be 32 bytes
   OffsettoPortName := 8, PortNameSize := 32
   result := DllCall("winmm.dll\midiOutGetDevCapsA", UInt,uDeviceID, UInt,&MidiOutCaps, UInt,50, UInt)
 
-  If (result OR ErrorLevel) {
+  If (result OR ErrorLevel)
+  {
     MsgBox Error %result% (ErrorLevel = %ErrorLevel%) in retrieving the name of midi output %uDeviceID%
-  Return -1
+    Return -1
+  }
+
+  VarSetCapacity(PortName, PortNameSize)
+  DllCall("RtlMoveMemory", Str,PortName, Uint,&MidiOutCaps+OffsettoPortName, Uint,PortNameSize)
+  Return PortName
+
 }
 
-VarSetCapacity(PortName, PortNameSize)
-DllCall("RtlMoveMemory", Str,PortName, Uint,&MidiOutCaps+OffsettoPortName, Uint,PortNameSize)
-Return PortName
-}
 
-MidiOutsEnumerate() { ; Returns number of midi output devices, creates global array MidiOutPortName with their names
+
+
+; Returns number of midi output devices, creates global array MidiOutPortName with their names
+
+MidiOutsEnumerate()
+{
+
   local NumPorts, PortID
   MidiOutPortName =
   NumPorts := MidiOutGetNumDevs()
 
-  Loop %NumPorts% {
+  Loop %NumPorts%
+  {
     PortID := A_Index -1
     MidiOutPortName%PortID% := MidiOutNameGet(PortID)
   }
   Return NumPorts
+
 }
 
-UInt@(ptr) {
+
+
+
+; Helper functions
+
+UInt@(ptr)
+{
   Return *ptr | *(ptr+1) << 8 | *(ptr+2) << 16 | *(ptr+3) << 24
 }
 
-PokeInt(p_value, p_address) { ; Windows 2000 and later
+
+
+
+; Windows 2000 and later
+
+PokeInt(p_value, p_address)
+{
   DllCall("ntdll\RtlFillMemoryUlong", UInt,p_address, UInt,4, UInt,p_value)
 }
 
-;*************************************************
-;*      MIDI INPUT / OUTPUT UNDER THE HOOD
-;*************************************************
 
-;########MIDI LIB from orbik and lazslo#############
-;-------- orbiks midi input code --------------
-; Set up midi input and callback_window based on the ini file above.
-; This code copied from ahk forum Orbik's post on midi input
-; nothing below here to edit.
-; =============== midi in =====================
 
-Midiin_go:
-DeviceID := MidiInDevice                  ; midiindevice from IniRead above assigned to deviceid
-CALLBACK_WINDOW := 0x10000    ; from orbiks code for midi input
 
-Gui, +LastFound                                ; set up the window for midi data to arrive.
-hWnd := WinExist()                           ;MsgBox, 32, , line 176 - mcu-input  is := %MidiInDevice% , 3 ; this is just a test to show midi device selection
+; Midi in port handling - Returns a "|"-separated list of midi output devices
 
-hMidiIn =
-VarSetCapacity(hMidiIn, 4, 0)
-result := DllCall("winmm.dll\midiInOpen", UInt,&hMidiIn, UInt,DeviceID, UInt,hWnd, UInt,0, UInt,CALLBACK_WINDOW, "UInt")
-If result
+MidiInsList(ByRef NumPorts)
 {
-  MsgBox, Error, midiInOpen Returned %result%`n
-  ;GoSub, sub_exit
-}
 
-hMidiIn := NumGet(hMidiIn)              ; because midiInOpen writes the value in 32 bit binary Number, AHK stores it as a string
-result := DllCall("winmm.dll\midiInStart", UInt,hMidiIn)
-If result
-{
-  MsgBox, Error, midiInStart Returned %result%`nRight Click on the Tray Icon - Left click on MidiSet to select valid midi_in port.
-  ;GoSub, sub_exit
-}
-
-OpenCloseMidiAPI()
-; ----- the OnMessage listeners ----
-; LEFT HERE FOR REFERENCE
-; #define MM_MIM_OPEN 0x3C1 /* MIDI input */
-; #define MM_MIM_CLOSE 0x3C2
-; #define MM_MIM_DATA 0x3C3
-; #define MM_MIM_LONGDATA 0x3C4
-; #define MM_MIM_ERROR 0x3C5
-; #define MM_MIM_LONGERROR 0x3C6
-
-OnMessage(0x3C1, "MidiMsgDetect")  ;  See top of this file for function called when a midi message is detected
-OnMessage(0x3C2, "MidiMsgDetect")
-OnMessage(0x3C3, "MidiMsgDetect")
-OnMessage(0x3C4, "MidiMsgDetect")
-OnMessage(0x3C5, "MidiMsgDetect")
-OnMessage(0x3C6, "MidiMsgDetect")
-
-Return
-
-;*************************************************
-;*          MIDI IN PORT HANDLING
-;*************************************************
-
-MidiInsList(ByRef NumPorts)                                             ; should work for unicode now...
-{ ; Returns a "|"-separated list of midi output devices
   local List, MidiInCaps, PortName, result, midisize
   (A_IsUnicode)? offsetWordStr := 64: offsetWordStr := 32
   midisize := offsetWordStr + 18
   VarSetCapacity(MidiInCaps, midisize, 0)
-  VarSetCapacity(PortName, offsetWordStr)                       ; PortNameSize 32
+  VarSetCapacity(PortName, offsetWordStr) ; PortNameSize 32
 
-  NumPorts := DllCall("winmm.dll\midiInGetNumDevs") ; #midi output devices on system, First device ID = 0
+  NumPorts := DllCall("winmm.dll\midiInGetNumDevs") ; #midi output devices on system, First device ID 0
 
   Loop %NumPorts%
   {
     result := DllCall("winmm.dll\midiInGetDevCaps", "UInt",A_Index-1, "Ptr",&MidiInCaps, "UInt",midisize)
 
-    If (result OR ErrorLevel) {
+    If (result OR ErrorLevel)
+    {
       List .= "|-Error-"
       Continue
     }
+
     PortName := StrGet(&MidiInCaps + 8, offsetWordStr)
     List .= "|" PortName
   }
+
   Return SubStr(List,2)
+
 }
 
-MidiInGetNumDevs() { ; Get number of midi output devices on system, first device has an ID of 0
+
+
+
+; Get number of midi output devices on system, first device has an ID of 0
+
+MidiInGetNumDevs()
+{
   Return DllCall("winmm.dll\midiInGetNumDevs")
 }
-MidiInNameGet(uDeviceID = 0) {                  ; Get name of a midiOut device for a given ID
 
-  ;MIDIOUTCAPS struct
-  ;    WORD      wMid;
-  ;    WORD      wPid;
-  ;    MMVERSION vDriverVersion;
-  ;    CHAR      szPname[MAXPNAMELEN];
-  ;    WORD      wTechnology;
-  ;    WORD      wVoices;
-  ;    WORD      wNotes;
-  ;    WORD      wChannelMask;
-  ;    DWORD     dwSupport;
 
-  VarSetCapacity(MidiInCaps, 50, 0)               ; allows for szPname to be 32 bytes
+
+
+; Get name of a midiOut device for a given ID
+
+MidiInNameGet(uDeviceID = 0)
+{
+
+  VarSetCapacity(MidiInCaps, 50, 0) ; allows for szPname to be 32 bytes
   OffsettoPortName := 8, PortNameSize := 32
   result := DllCall("winmm.dll\midiInGetDevCapsA", UInt,uDeviceID, UInt,&MidiInCaps, UInt,50, UInt)
 
-  If (result OR ErrorLevel) {
+  If (result OR ErrorLevel)
+  {
     MsgBox Error %result% (ErrorLevel = %ErrorLevel%) in retrieving the name of midi Input %uDeviceID%
-  Return -1
+    Return -1
+  }
+
+  VarSetCapacity(PortName, PortNameSize)
+  DllCall("RtlMoveMemory", Str,PortName, Uint,&MidiInCaps+OffsettoPortName, Uint,PortNameSize)
+  Return PortName
+
 }
 
-VarSetCapacity(PortName, PortNameSize)
-DllCall("RtlMoveMemory", Str,PortName, Uint,&MidiInCaps+OffsettoPortName, Uint,PortNameSize)
-Return PortName
-}
 
-MidiInsEnumerate() { ; Returns number of midi output devices, creates global array MidiOutPortName with their names
+
+
+; Returns number of midi output devices, creates global array MidiOutPortName with their names
+
+MidiInsEnumerate()
+{
+
   local NumPorts, PortID
   MidiInPortName =
   NumPorts := MidiInGetNumDevs()
 
-  Loop %NumPorts% {
+  Loop %NumPorts%
+  {
     PortID := A_Index -1
     MidiInPortName%PortID% := MidiInNameGet(PortID)
   }
+
   Return NumPorts
+
 }

@@ -1,4 +1,4 @@
-dev:
+Develop:
 
 
 Loop
@@ -21,7 +21,7 @@ return
 
 !^m::
 
-GoSub, Midimon
+GoSub, MidiMonitor
 
 return
 
