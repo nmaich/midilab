@@ -349,9 +349,18 @@ return
 
 ReadIni()                                         ; Read .ini file to load port settings - also set up the tray Menu
 {
+  Menu, tray, NoStandard
+  ;Menu, tray, add
+  menu, tray, add, MidiMon        ; Menu item for the midi monitor
   Menu, tray, add, MidiSet           ; set midi ports tray item
   Menu, tray, add, ResetAll          ; DELETE THE .INI FILE - a new config needs to be set up
-  menu, tray, add, MidiMon        ; Menu item for the midi monitor
+
+  ;Reset configuration, :
+  ;IO Monitor,
+
+  menu, tray, Rename, MidiSet, Open MIDI port selection
+  menu, tray, Rename, ResetAll, Reset port selection
+  menu, tray, Rename, MidiMon, Show IO Monitor (Ctrl+Alt+M)
   global MidiInDevice, MidiOutDevice, version ; version var is set at the beginning.
   IfExist, core/%version%.ini
   {
