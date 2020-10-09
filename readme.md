@@ -1,10 +1,46 @@
-Forked from floegerer / midilab
+## What is this
+Script that converts keystroke to midi note output.   
+For now, default keymap is simulating button accordion c system.  
+!!! not tested midi-in, sendcc  
+
+Most of script is derived from floegerer / midilab.  
+Midilab is script dealing with MIDI (in and out) message, written in AutoHotkey.  
+
+
+## How to use
+- Download the current version of AHK at https://www.autohotkey.com/ or https://www.autohotkey.com/download/
+
+- If necessary, Install virtual midi device such as LoopBe.
+
+- Run the application by launching midilab.ahk.  
+Make sure the app runs in the correct folder if you eg. create a shortcut.
+
+- Then, midilab.ahk will appear on notification area (system tray).  
+The first time you run the script, you will have to select MIDI devices.  
+Rightclick on system tray icon, and click "Open Midi Port Selection".  
+Select midi in and out devices, and save and reload script.
+
+- If you want exit or suspend midilab.ahk, rightclick on system tray icon will show menu.
+
+## history
+2020.10.9
+- combined splited source codes, because I was confused at global variables and label flow.
+- customized hotkeys simulating button accordion added.
+- !!! not tested midi-in, sendcc
+
+## todo 
+(not eager to be honest)
+1. organize global variables.
+2. get labels into function.
+3. if useful, split it back into library files.
+
+***
+
+This repository is Forked from floegerer / midilab
 
 below is floegerer / midilab readme.md
 
 ***
-
-
 
 # Documentation
 
